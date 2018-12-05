@@ -24,6 +24,25 @@ import unittest
 import time
 import logging
 import json
+import os
+import platform
+
+HERE = os.path.abspath(os.path.dirname(__file__))
+TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+TESTOUTPUT = os.path.join(HERE, 'test-output', platform.python_version())
+if not os.path.exists(TESTOUTPUT):
+    os.makedirs(TESTOUTPUT)
+mockTopPath = os.path.join(TOPDIR, 'wwpdb', 'mock-data')
+rwMockTopPath = os.path.join(TESTOUTPUT)
+
+# Must create config file before importing ConfigInfo
+from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup
+from wwpdb.utils.testing.CreateRWTree import CreateRWTree
+# Copy site-config and selected items
+crw = CreateRWTree(mockTopPath, TESTOUTPUT)
+crw.createtree(['site-config', 'wsresources'])
+# Use populate r/w site-config using top mock site-config
+SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
 
 from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
 
@@ -37,7 +56,7 @@ class ContentRequestReportPdbxTests(unittest.TestCase):
 
     def setUp(self):
         self.__verbose = True
-        self.__pdbxFilePath = "../tests/1kip.cif"
+        self.__pdbxFilePath = os.path.join(mockTopPath, 'MODELS', "1kip.cif")
         self.__logFilePath = "my.log"
 
 
@@ -87,6 +106,7 @@ class ContentRequestReportPdbxTests(unittest.TestCase):
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
             ctypeL = cr.getContentTypes()
+            self.assertNotEqual(ctypeL, [], 'Could not parse content types')
             for ctype in ctypeL:
                 if ctype.startswith("report-entry-"):
                     logger.info("Definition %r" % ctype)
