@@ -49,7 +49,7 @@ setup(
     # For now, include validation package. Later on may separate web code from backend
     install_requires=['wwpdb.io', 'wwpdb.utils.config', 'wwpdb.utils.db', 'wwpdb.utils.detach',
                       'wwpdb.utils.message_queue', 'wwpdb.utils.ws_utils',
-                      'onedep-biocuration-api'],
+                      'onedep-biocuration-api', 'oslo.concurrency'],
     packages=find_packages(exclude=['wwpdb.apps.tests-contentws',
                                     'mock-data']),
     # Enables Manifest to be used

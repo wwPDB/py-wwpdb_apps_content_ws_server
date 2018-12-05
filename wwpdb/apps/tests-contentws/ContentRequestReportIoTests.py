@@ -25,6 +25,26 @@ import unittest
 import time
 import logging
 
+import os
+import platform
+
+HERE = os.path.abspath(os.path.dirname(__file__))
+TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+TESTOUTPUT = os.path.join(HERE, 'test-output', platform.python_version())
+if not os.path.exists(TESTOUTPUT):
+    os.makedirs(TESTOUTPUT)
+mockTopPath = os.path.join(TOPDIR, 'wwpdb', 'mock-data')
+rwMockTopPath = os.path.join(TESTOUTPUT)
+
+# Must create config file before importing ConfigInfo
+from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup
+from wwpdb.utils.testing.CreateRWTree import CreateRWTree
+# Copy site-config and selected items
+crw = CreateRWTree(mockTopPath, TESTOUTPUT)
+crw.createtree(['site-config', 'wsresources'])
+# Use populate r/w site-config using top mock site-config
+SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
+
 from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
 
 FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'

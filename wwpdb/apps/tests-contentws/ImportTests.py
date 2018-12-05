@@ -30,6 +30,7 @@ SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
 
 from wwpdb.apps.content_ws_server.webapp.WebServiceApp import WebServiceApp
 from wwpdb.apps.content_ws_server.content.ContentRequest import ContentRequest
+from wwpdb.apps.content_ws_server.register.Register import Register
 
 
 class ImportTests(unittest.TestCase):
@@ -40,6 +41,7 @@ class ImportTests(unittest.TestCase):
         """Tests simple instantiation"""
 #        WebServiceApp()
         ContentRequest()
+        Register()
         pass
 
 

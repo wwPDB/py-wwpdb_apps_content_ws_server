@@ -280,7 +280,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         fOut.write('export PYTHONPATH=$TOP_WWPDB_PYTHON_DIR/wwpdb/apps/deposit:$PYTHONPATH\n')
         fOut.write('python %s\n' % cmdPy)
         fOut.close()
-        os.chmod(cmdfile, 0777)
+        os.chmod(cmdfile, 0o777)
 
         logfile = os.path.join(sessDir, 'generate.log')
 
