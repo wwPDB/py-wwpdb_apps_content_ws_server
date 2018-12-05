@@ -155,7 +155,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
     def testWriteContentDef(self):
         """Test case -  report type status
         """
-        startTime = time.clock()
+        startTime = time.time()
         logger.info("Starting")
 
         try:
@@ -165,13 +165,13 @@ class ContentRequestReportIoTests(unittest.TestCase):
             logger.exception("Failing test")
             self.fail()
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed with status %r (%.2f seconds)\n" % (ok, (endTime - startTime)))
 
     def testReadContentDef(self):
         """Test case -  report content definition
         """
-        startTime = time.clock()
+        startTime = time.time()
         logger.info("Starting")
         try:
             for ky in self.__contentDefD.keys():
@@ -182,7 +182,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
             logger.exception("Failing test")
             self.fail()
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
 
 

@@ -69,7 +69,7 @@ class ContentRequestReportDbTests(unittest.TestCase):
     def testContentTypeReader(self):
         """Test case -  read summary report content type
         """
-        startTime = time.clock()
+        startTime = time.time()
         logger.info("Starting")
 
         try:
@@ -81,13 +81,13 @@ class ContentRequestReportDbTests(unittest.TestCase):
             logger.exception("Failing test")
             self.fail()
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
 
     def testSummaryReport(self):
         """Test case -  create summary report
         """
-        startTime = time.clock()
+        startTime = time.time()
         logger.info("Starting")
 
         try:
@@ -105,7 +105,7 @@ class ContentRequestReportDbTests(unittest.TestCase):
             logger.exception("Failing test")
             self.fail()
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
 
 

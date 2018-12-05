@@ -68,7 +68,7 @@ class ContentRequestReportTests(unittest.TestCase):
     def testEntryReport(self):
         """Test case -  report type status
         """
-        startTime = time.clock()
+        startTime = time.time()
         logger.info("Starting")
 
         try:
@@ -79,7 +79,7 @@ class ContentRequestReportTests(unittest.TestCase):
             logger.exception("Failing test")
             self.fail()
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
 
 
