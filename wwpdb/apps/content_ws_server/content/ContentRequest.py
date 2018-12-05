@@ -23,7 +23,7 @@ import logging
 import copy
 import json
 #
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.ws_utils.ServiceDataStore import ServiceDataStore
 from wwpdb.utils.ws_utils.ServiceHistory import ServiceHistory
 #

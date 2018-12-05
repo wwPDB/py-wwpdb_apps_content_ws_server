@@ -24,7 +24,7 @@ except ImportError:
     import simplejson as json
 #
 from oslo_concurrency import lockutils
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 
 #
 logger = logging.getLogger()

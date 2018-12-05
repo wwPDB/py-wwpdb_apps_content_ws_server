@@ -26,7 +26,7 @@ __version__ = "V0.07"
 
 import logging
 #
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.ws_utils.ServiceRequest import ServiceRequest
 from wwpdb.utils.ws_utils.ServiceResponse import ServiceResponse
 #

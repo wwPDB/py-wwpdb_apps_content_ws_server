@@ -19,7 +19,7 @@ import sys
 import time
 import logging
 
-from pdbx_v2.adapter.IoAdapterCore import IoAdapterCore
+from mmcif.io.IoAdapterCore import IoAdapterCore
 from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
 #
 logger = logging.getLogger()

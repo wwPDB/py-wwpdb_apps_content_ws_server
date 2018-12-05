@@ -18,8 +18,8 @@ import sys
 import time
 import logging
 
-from pdbx_v2.adapter.IoAdapterCore import IoAdapterCore
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
+from mmcif.io.IoAdapterCore import IoAdapterCore
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 #from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
 
 from onedep_biocuration.api.ContentRequest import  ContentRequest

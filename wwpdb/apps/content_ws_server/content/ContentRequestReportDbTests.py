@@ -25,7 +25,7 @@ import time
 import logging
 import json
 
-from wwpdb.api.facade.ConfigInfo import getSiteId
+from wwpdb.utils.config.ConfigInfo import getSiteId
 from wwpdb.apps.content_ws_server.content.ContentRequestReportDb import ContentRequestReportDb
 
 FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'

@@ -34,7 +34,7 @@ import glob
 import signal
 import os
 
-from wwpdb.api.facade.ConfigInfoDataSet import ConfigInfoDataSet
+from wwpdb.utils.config.ConfigInfoDataSet import ConfigInfoDataSet
 
 from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
 from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
@@ -42,8 +42,8 @@ from wwpdb.utils.ws_utils.ServiceSessionState import ServiceSessionState
 from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
 
 from wwpdb.utils.message_queue.MessagePublisher import MessagePublisher
-from wwpdb.utils.rcsb.PathInfo import PathInfo
-from wwpdb.utils.rcsb.DataExchange import DataExchange
+from wwpdb.io.locator.PathInfo import PathInfo
+from wwpdb.io.file.DataExchange import DataExchange
 
 logger = logging.getLogger(__name__)
 
