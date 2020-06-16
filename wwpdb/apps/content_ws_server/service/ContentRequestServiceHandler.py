@@ -133,6 +133,8 @@ def main():
     myHostName = str(myFullHostName.split('.')[0]).lower()
     #
     wsLogDirPath = os.path.join(topSessionPath, "ws-logs")
+    if not os.path.exists(wsLogDirPath):
+        os.makedirs(wsLogDirPath)
 
     #  Setup logging  --
     now = time.strftime("%Y-%m-%d", time.localtime())
