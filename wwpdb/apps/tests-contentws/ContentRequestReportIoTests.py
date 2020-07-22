@@ -180,7 +180,10 @@ class ContentRequestReportIoTests(unittest.TestCase):
                                     'title',
                                     'initial_deposition_date'
                                     ],
-                    'database_2': ['structure_id''database_id', 'database_code'],
+                    'database_2': ['structure_id',
+                                   'database_id',
+                                   'database_code'
+                                   ],
                 },
                 'type': 'rdbms',
                 'resource': {
