@@ -163,6 +163,36 @@ class ContentRequestReportIoTests(unittest.TestCase):
                              },
                 'conditions': {},
             },
+            'report-summary-emdb-status': {
+                'content': {
+                    'em_admin': ['structure_id',
+                                 'current_status',
+                                 'deposition_date',
+                                 'deposition_site',
+                                 'last_update',
+                                 'map_release_date',
+                                 'header_release_date'
+                                 ],
+                    'rcsb_status': ['structure_id',
+                                    'exp_method',
+                                    'process_site',
+                                    'rcsb_annotator'
+                                    'title',
+                                    'map_release_date',
+                                    'deposition_date'
+                                    ],
+                    'database_2': ['structure_id''database_id', 'database_code'],
+                },
+                'type': 'rdbms',
+                'resource': {
+                    'rcsb_status': ('da_internal', 'da_internal'),
+                    'em_admin': ('da_internal', 'da_internal'),
+                    'database_2': ('da_internal', 'da_internal'),
+                },
+                'conditions': {'rcsb_status': {'exp_method': (
+                    'ELECTRON MICROSCOPY', 'char', 'LIKE')}
+                },
+            },
             'report-entry-example-sasbdb': {
                 'content': {'database_2': ['database_id', 'database_code'],
                             'pdbx_database_status': ['status_code', 'author_release_status_code',
