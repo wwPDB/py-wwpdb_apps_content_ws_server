@@ -141,7 +141,6 @@ class ContentRequestReportIoTests(unittest.TestCase):
             },
             'report-summary-pdbx-contact-author': {
                 'content': {'pdbx_contact_author': ['structure_id',
-                                                    #'id',
                                                     'address_1',
                                                     'address_2',
                                                     'address_3',
