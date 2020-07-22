@@ -13,10 +13,10 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import sys
+import argparse
 import logging
+import sys
 from wwpdb.utils.ws_utils.TokenUtils import JwtTokenUtils
-
 
 # Create logger
 logger = logging.getLogger()
@@ -30,11 +30,13 @@ logger.setLevel(logging.INFO)
 class Register(object):
     """  Off-line API registration -
     """
+
     def __init__(self):
         pass
         #
 
-    def makeAccessToken(self, emailAddress, tokenPrefix="CONTENTWS", expireDays=30, tokenFileName="onedep_biocuration_apikey.jwt"):
+    def makeAccessToken(self, emailAddress, tokenPrefix="CONTENTWS", expireDays=30,
+                        tokenFileName="onedep_biocuration_apikey.jwt"):
         '''Test acquire new or existing token and write to disk
         '''
         try:
@@ -54,17 +56,23 @@ class Register(object):
         return ok
 
 
-if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        # Use test case if no arguments are provided -
-        emailAddress = "jdwestbrook@gmail.com"
-        tokenPrefix = "CONTENTWS"
-        expireDays = 30
-    else:
-        emailAddress = sys.argv[1]
-        tokenPrefix = sys.argv[2]
-        expireDays = int(str(sys.argv[3]))
-    ##
-    ##
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--debug', help='debugging', action='store_const', dest='loglevel', const=logging.DEBUG,
+                        default=logging.INFO)
+    parser.add_argument('--emailAddress', help='email address', type=str, default='jdwestbrook@gmail.com')
+    parser.add_argument('--tokenPrefix', help='tokenPrefix', type=str, default='CONTENTWS')
+    parser.add_argument('--expireDays', help='expireDays', type=int, default=30)
+
+    args = parser.parse_args()
+    logger.setLevel(args.loglevel)
+
     reg = Register()
-    reg.makeAccessToken(emailAddress, tokenPrefix=tokenPrefix, expireDays=expireDays)
+    reg.makeAccessToken(emailAddress=args.emailAddress,
+                        tokenPrefix=args.tokenPrefix,
+                        expireDays=args.expireDays
+                        )
+
+
+if __name__ == '__main__':
+    main()
