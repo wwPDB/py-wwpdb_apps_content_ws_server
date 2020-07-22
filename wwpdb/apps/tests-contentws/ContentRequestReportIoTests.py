@@ -154,7 +154,8 @@ class ContentRequestReportIoTests(unittest.TestCase):
                                                     'country',
                                                     'phone',
                                                     'role',
-                                                    'organization_type'
+                                                    'organization_type',
+                                                    'identifier_ORCID'
                                                     ]
                             },
                 'type': 'rdbms',
