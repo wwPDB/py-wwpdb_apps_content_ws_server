@@ -176,7 +176,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                     'rcsb_status': ['structure_id',
                                     'exp_method',
                                     'process_site',
-                                    'rcsb_annotator'
+                                    'rcsb_annotator',
                                     'title',
                                     'map_release_date',
                                     'deposition_date'
