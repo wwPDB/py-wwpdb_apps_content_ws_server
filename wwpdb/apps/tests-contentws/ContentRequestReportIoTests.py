@@ -178,8 +178,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                                     'process_site',
                                     'rcsb_annotator',
                                     'title',
-                                    'map_release_date',
-                                    'deposition_date'
+                                    'initial_deposition_date'
                                     ],
                     'database_2': ['structure_id''database_id', 'database_code'],
                 },
