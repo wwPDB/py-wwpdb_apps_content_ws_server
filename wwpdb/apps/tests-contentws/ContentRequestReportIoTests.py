@@ -61,46 +61,77 @@ class ContentRequestReportIoTests(unittest.TestCase):
         self.__verbose = True
         #
         self.__contentDefD = {
-            'report-entry-example-test': {'content': {
-                'entity_poly': ['entity_id', 'type', 'nstd_linkage', 'nstd_monomer', 'pdbx_seq_one_letter_code',
-                                'pdbx_seq_one_letter_code_can'],
-                'database_2': ['database_code']
-            },
+            'report-entry-example-test': {
+                'content': {
+                    'entity_poly': ['entity_id', 'type', 'nstd_linkage', 'nstd_monomer', 'pdbx_seq_one_letter_code',
+                                    'pdbx_seq_one_letter_code_can'],
+                    'database_2': ['database_code']
+                },
                 'type': 'entry',
                 'conditions': {
                     'entity_poly': {'entity_id': ('1', 'char', 'eq')},
                     'database_2': {'database_id': ('PDB', 'char', 'eq')}
                 },
             },
-            'report-summary-entry': {'content': {
-                'rcsb_status': ['author_approval_type', 'author_list', 'author_release_sequence',
-                                'author_release_status_code',
-                                'date_author_approval', 'date_author_release_request',
-                                'date_begin_deposition', 'date_begin_processing',
-                                'date_begin_release_preparation', 'date_chemical_shifts',
-                                'date_coordinates', 'date_hold_chemical_shifts',
-                                'date_hold_coordinates',
-                                'date_hold_nmr_constraints', 'date_hold_struct_fact',
-                                'date_nmr_constraints', 'date_struct_fact',
-                                'exp_method', 'initial_deposition_date', 'pdb_id', 'status_code',
-                                'status_code_cs',
-                                'status_code_mr', 'status_code_sf', 'structure_id'],
-                'em_admin': ['entry_id', 'structure_id', 'title', 'map_release_date',
-                             'deposition_date'],
-                'audit_author': ['structure_id', 'name', 'pdbx_ordinal'],
-                'exptl': ['structure_id', 'method']},
+            'report-summary-entry': {
+                'content': {
+                    'rcsb_status': ['structure_id',
+                                    'author_approval_type',
+                                    'author_list',
+                                    'author_release_sequence',
+                                    'author_release_status_code',
+                                    'date_author_approval',
+                                    'date_author_release_request',
+                                    'date_begin_deposition',
+                                    'date_begin_processing',
+                                    'date_begin_release_preparation',
+                                    'date_chemical_shifts',
+                                    'date_coordinates',
+                                    'date_hold_chemical_shifts',
+                                    'date_hold_coordinates',
+                                    'date_hold_nmr_constraints',
+                                    'date_hold_struct_fact',
+                                    'date_nmr_constraints',
+                                    'date_struct_fact',
+                                    'exp_method',
+                                    'initial_deposition_date',
+                                    'pdb_id',
+                                    'status_code',
+                                    'status_code_cs',
+                                    'status_code_mr',
+                                    'status_code_sf',
+                                    ],
+                    'audit_author': ['structure_id',
+                                     'name',
+                                     'pdbx_ordinal'
+                                     ],
+                    'exptl': ['structure_id',
+                              'method'
+                              ],
+                    'database_2': [
+                        'structure_id',
+                        'database_code',
+                        'database_id'
+                    ]
+                },
                 'type': 'rdbms',
-                'resource': {'em_admin': ('da_internal', 'da_internal'),
-                             'rcsb_status': ('da_internal', 'da_internal'),
-                             'audit_author': ('da_internal', 'da_internal'),
-                             'exptl': ('da_internal', 'da_internal'),
-                             },
+                'resource': {
+                    'rcsb_status': ('da_internal', 'da_internal'),
+                    'audit_author': ('da_internal', 'da_internal'),
+                    'exptl': ('da_internal', 'da_internal'),
+                    'database_2': ('da_internal', 'da_internal'),
+                },
                 'conditions': {},
             },
             'report-summary-entity-poly': {
-                'content': {'entity_poly': ['structure_id', 'entity_id', 'type', 'nstd_linkage', 'nstd_monomer',
+                'content': {'entity_poly': ['structure_id',
+                                            'entity_id',
+                                            'type',
+                                            'nstd_linkage',
+                                            'nstd_monomer',
                                             'pdbx_seq_one_letter_code',
-                                            'pdbx_seq_one_letter_code_can']
+                                            'pdbx_seq_one_letter_code_can'
+                                            ]
                             },
                 'type': 'rdbms',
                 'resource': {'entity_poly': ('da_internal', 'da_internal'),
@@ -109,11 +140,22 @@ class ContentRequestReportIoTests(unittest.TestCase):
                 'conditions': {},
             },
             'report-summary-pdbx-contact-author': {
-                'content': {'pdbx_contact_author': ['structure_id', 'id', 'address_1', 'address_2', 'address_3',
+                'content': {'pdbx_contact_author': ['structure_id',
+                                                    'id',
+                                                    'address_1',
+                                                    'address_2',
+                                                    'address_3',
                                                     'city',
                                                     'state_province',
-                                                    'postal_code', 'email', 'name_first',
-                                                    'name_last', 'country', 'phone', 'role', 'organization_type']
+                                                    'postal_code',
+                                                    'email',
+                                                    'name_first',
+                                                    'name_last',
+                                                    'country',
+                                                    'phone',
+                                                    'role',
+                                                    'organization_type'
+                                                    ]
                             },
                 'type': 'rdbms',
                 'resource': {'pdbx_contact_author': ('da_internal', 'da_internal'),
@@ -146,24 +188,26 @@ class ContentRequestReportIoTests(unittest.TestCase):
                 'conditions': {}
             },
 
-            'report-summary-example-emdb-admin': {'content': {
-                'em_admin': ['entry_id', 'structure_id', 'title', 'map_release_date',
-                             'deposition_date'], },
+            'report-summary-example-emdb-admin': {
+                'content': {
+                    'em_admin': ['entry_id', 'structure_id', 'title', 'map_release_date',
+                                 'deposition_date'], },
                 'type': 'rdbms',
                 'resource': {
                     'em_admin': ('da_internal', 'da_internal')},
                 'conditions': {},
             },
-            'report-summary-example-emdb-status': {'content': {
-                'deposition': ["dep_set_id", "pdb_id", "initial_deposition_date", "status_code",
-                               "author_release_status_code",
-                               "title", "title_emdb", "author_list", "author_list_emdb",
-                               "exp_method", "status_code_exp",
-                               "emdb_id", "status_code_emdb",
-                               "dep_author_release_status_code_emdb"],
-                'em_admin': ['entry_id', 'structure_id', 'title', 'map_release_date',
-                             'deposition_date'],
-            },
+            'report-summary-example-emdb-status': {
+                'content': {
+                    'deposition': ["dep_set_id", "pdb_id", "initial_deposition_date", "status_code",
+                                   "author_release_status_code",
+                                   "title", "title_emdb", "author_list", "author_list_emdb",
+                                   "exp_method", "status_code_exp",
+                                   "emdb_id", "status_code_emdb",
+                                   "dep_author_release_status_code_emdb"],
+                    'em_admin': ['entry_id', 'structure_id', 'title', 'map_release_date',
+                                 'deposition_date'],
+                },
                 'type': 'rdbms',
                 'resource': {
                     'deposition': ('status', 'status'),
