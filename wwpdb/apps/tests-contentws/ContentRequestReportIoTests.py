@@ -73,7 +73,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                     'database_2': {'database_id': ('PDB', 'char', 'eq')}
                 },
             },
-            'report-summary-entry': {
+            'report-summary-wwpdb-entry': {
                 'content': {
                     'rcsb_status': ['structure_id',
                                     'author_approval_type',
@@ -123,7 +123,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                 },
                 'conditions': {},
             },
-            'report-summary-entity-poly': {
+            'report-summary-wwpdb-entity-poly': {
                 'content': {'entity_poly': ['structure_id',
                                             'entity_id',
                                             'type',
@@ -139,7 +139,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                              },
                 'conditions': {},
             },
-            'report-summary-pdbx-contact-author': {
+            'report-summary-wwpdb-pdbx-contact-author': {
                 'content': {'pdbx_contact_author': ['structure_id',
                                                     'address_1',
                                                     'address_2',
