@@ -73,7 +73,7 @@ class ContentRequestReportIoTests(unittest.TestCase):
                     'database_2': {'database_id': ('PDB', 'char', 'eq')}
                 },
             },
-            'report-summary-wwpdb-entry': {
+            'report-summary-wwpdb-status': {
                 'content': {
                     'rcsb_status': ['structure_id',
                                     'author_approval_type',
