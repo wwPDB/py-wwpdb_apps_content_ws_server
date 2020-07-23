@@ -105,3 +105,6 @@ venv.bak/
 
 # tests
 test-output
+
+# ide files
+.vscode
