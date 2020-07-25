@@ -183,8 +183,8 @@ class ContentRequestReportIoTests(unittest.TestCase):
                             ]
                             },
                 'type': 'rdbms',
-                'resource': {'entity_poly': ('da_internal', 'da_internal'),
-
+                'resource': {'pdbx_audit_revision_history': ('da_internal', 'da_internal'),
+                             'pdbx_audit_revision_details': ('da_internal', 'da_internal')
                              },
                 'conditions': {},
             },
