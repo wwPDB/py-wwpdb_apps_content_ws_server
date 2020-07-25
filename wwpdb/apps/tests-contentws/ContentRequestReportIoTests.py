@@ -163,6 +163,31 @@ class ContentRequestReportIoTests(unittest.TestCase):
                              },
                 'conditions': {},
             },
+            'report-summary-wwpdb-audit-revision': {
+                'content': {'pdbx_audit_revision_history': ['structure_id',
+                                                            'ordinal',
+                                                            'data_content_type',
+                                                            'major_revision',
+                                                            'minor_revision',
+                                                            'revision_date',
+                                                            'internal_version'
+                                                            ],
+                            'pdbx_audit_revision_details': [
+                                'structure_id',
+                                'ordinal',
+                                'revision_ordinal',
+                                'data_content_type',
+                                'provider',
+                                'type',
+                                'description'
+                            ]
+                            },
+                'type': 'rdbms',
+                'resource': {'pdbx_audit_revision_history': ('da_internal', 'da_internal'),
+                             'pdbx_audit_revision_details': ('da_internal', 'da_internal')
+                             },
+                'conditions': {},
+            },
             'report-summary-emdb-status': {
                 'content': {
                     'em_admin': ['structure_id',
