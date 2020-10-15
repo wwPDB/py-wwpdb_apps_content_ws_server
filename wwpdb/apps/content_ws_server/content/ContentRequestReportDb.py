@@ -139,7 +139,7 @@ class ContentRequestReportDb(MyConnectionBase):
     def __processQuery(self, resourceName, sList, sqlS):
         """ Process query  -
         """
-        startTime = time.clock()
+        startTime = time.time()
         #
         # config the db auth info
         self.setResource(resourceName=resourceName.upper())
@@ -171,7 +171,7 @@ class ContentRequestReportDb(MyConnectionBase):
         except:
             logger.exception("Failing for resource %r and query %r" % (resourceName, sqlS))
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.debug("Completed in (%.2f seconds)" % (endTime - startTime))
         return rL
 

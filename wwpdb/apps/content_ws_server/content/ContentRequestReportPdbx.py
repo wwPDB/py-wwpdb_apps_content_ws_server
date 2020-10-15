@@ -52,7 +52,7 @@ class ContentRequestReportPdbx(object):
     def readFilePdbx(self, filePath, logFilePath, catNameList=None):
         """Read selected categories from PDBx file
         """
-        startTime = time.clock()
+        startTime = time.time()
         containerList = []
         try:
             io = IoAdapterCore(verbose=self.__verbose, log=sys.stderr)
@@ -66,7 +66,7 @@ class ContentRequestReportPdbx(object):
         except:
             logger.exception("Read failing for %r" % filePath)
 
-        endTime = time.clock()
+        endTime = time.time()
         logger.info("Completed in (%.2f seconds)\n" % (endTime - startTime))
         return containerList
 
