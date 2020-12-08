@@ -49,12 +49,12 @@ class Register(object):
             tU = JwtTokenUtils(tokenPrefix=tokenPrefix)
             tokenId, jwtToken = tU.getToken(emailAddress, expireDays=expireDays)
             logging.info(
-                "For e-mail %r tokenid %r is %r " % (emailAddress, tokenId, jwtToken)
+                "For e-mail %r token ID %r is %r " % (emailAddress, tokenId, jwtToken)
             )
             tD = tU.parseToken(jwtToken)
             logging.info("token %r payload %r " % (tokenId, tD))
             #
-            with open(tokenFileName, "wb") as outfile:
+            with open(tokenFileName, "w") as outfile:
                 outfile.write("%s" % jwtToken)
             logging.info("token written to %r " % tokenFileName)
             ok = True
