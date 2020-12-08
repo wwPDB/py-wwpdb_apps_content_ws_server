@@ -27,7 +27,7 @@ __version__ = "V0.07"
 
 import datetime
 import time
-from subprocess import Popen,PIPE
+from subprocess import Popen, PIPE
 import json
 import logging
 import glob
@@ -49,7 +49,6 @@ logger = logging.getLogger(__name__)
 
 
 class ContentServiceAppWorker(ServiceWorkerBase):
-
     def __init__(self, reqObj=None, sessionDataPrefix=None):
         """
          Worker methods for annotation tasks.
@@ -58,26 +57,29 @@ class ContentServiceAppWorker(ServiceWorkerBase):
          for annotation tasks module.
 
         """
-        super(ContentServiceAppWorker, self).__init__(reqObj=reqObj, sessionDataPrefix=sessionDataPrefix)
+        super(ContentServiceAppWorker, self).__init__(
+            reqObj=reqObj, sessionDataPrefix=sessionDataPrefix
+        )
         #
         #  URL to method mapping -----  the service names are case insensitive --
         #
-        self.__appPathD = {'/contentws/dump': '_dumpOp',
-                           '/contentws/session': '_sessionOp',
-                           '/contentws/upload': '_uploadFileOp',
-                           '/contentws/input_file': '_uploadFileOp',
-                           '/contentws/sessioninfo': '_sessionInfoOp',
-                           '/contentws/session_status': '_sessionInfoOp',
-                           '/contentws/download': '_downloadOp',
-                           '/contentws/output_file': '_uploadFileOp',
-                           '/contentws/submit': '_submitReportOp',
-                           '/contentws/entry_content': '_submitContentRequestOp',
-                           '/contentws/summary_content': '_submitContentRequestOp',
-                           '/contentws/index': '_indexOp',
-                           '/contentws/session_index': '_indexOp',
-                           '/contentws/session_activity': '_activityOp',
-                           '/contentws/activity': '_activityOp',
-                           }
+        self.__appPathD = {
+            "/contentws/dump": "_dumpOp",
+            "/contentws/session": "_sessionOp",
+            "/contentws/upload": "_uploadFileOp",
+            "/contentws/input_file": "_uploadFileOp",
+            "/contentws/sessioninfo": "_sessionInfoOp",
+            "/contentws/session_status": "_sessionInfoOp",
+            "/contentws/download": "_downloadOp",
+            "/contentws/output_file": "_uploadFileOp",
+            "/contentws/submit": "_submitReportOp",
+            "/contentws/entry_content": "_submitContentRequestOp",
+            "/contentws/summary_content": "_submitContentRequestOp",
+            "/contentws/index": "_indexOp",
+            "/contentws/session_index": "_indexOp",
+            "/contentws/session_activity": "_activityOp",
+            "/contentws/activity": "_activityOp",
+        }
         self.addServices(self.__appPathD)
         #
         self.__debug = False
@@ -96,9 +98,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         logger.debug("Request path   %s " % self._reqObj.getRequestPath())
         logger.debug("Request inp path %s " % inpRequestPath)
         #
-        if inpRequestPath.startswith('/contentws/report/d_'):
-            rFields = inpRequestPath.split('/')
-            self._reqObj.setValue('idcode', rFields[4].upper())
+        if inpRequestPath.startswith("/contentws/report/d_"):
+            rFields = inpRequestPath.split("/")
+            self._reqObj.setValue("idcode", rFields[4].upper())
             requestPath = "/review/report"
         else:
             requestPath = inpRequestPath
@@ -111,7 +113,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         logger.debug("Starting now")
         sst = ServiceSessionState()
         rD = self._reqObj.getDictionary()
-        sst.setAppDataDict(rD, format='json')
+        sst.setAppDataDict(rD, format="json")
         logger.debug("Completed")
         return sst
 
@@ -123,19 +125,26 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
         if not ok:
             sst.setServiceCompletionFlag(ok)
-            sst.setServiceError(msg='Session acquire failed')
+            sst.setServiceError(msg="Session acquire failed")
         else:
             sst.setServiceCompletionFlag(ok)
             sD = self._getSessionStoreDict()
-            if 'session_history' in sD:
-                shL = sD['session_history']
+            if "session_history" in sD:
+                shL = sD["session_history"]
             else:
                 shL = []
-            if 'status' in sD:
-                status = sD['status']
+            if "status" in sD:
+                status = sD["status"]
             else:
-                status = 'unknown'
-            sst.setAppDataDict({'session_id': self._sessionId, 'status': status, 'session_history': shL}, format='json')
+                status = "unknown"
+            sst.setAppDataDict(
+                {
+                    "session_id": self._sessionId,
+                    "status": status,
+                    "session_history": shL,
+                },
+                format="json",
+            )
         #
         logger.debug("Completed")
         return sst
@@ -152,12 +161,12 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = self._getSession(new=True, useContext=True, contextOverWrite=True)
         if not ok:
             sst.setServiceCompletionFlag(ok)
-            sst.setServiceError(msg='Session creation failed')
+            sst.setServiceError(msg="Session creation failed")
         else:
-            self._trackServiceStatus('created')
-            self._setSessionStoreValue('status', 'newsession')
+            self._trackServiceStatus("created")
+            self._setSessionStoreValue("status", "newsession")
             sst.setServiceCompletionFlag(ok)
-            sst.setAppDataDict({'session_id': self._sessionId}, format='json')
+            sst.setAppDataDict({"session_id": self._sessionId}, format="json")
         #
         logger.debug("Completed")
         return sst
@@ -176,36 +185,39 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             #            join an existing session -
             ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
             if not ok:
-                sst.setServiceError(msg='Session acquire failed')
+                sst.setServiceError(msg="Session acquire failed")
             else:
                 suu = ServiceUploadUtils(reqObj=self._reqObj)
                 if not suu.isFileUpload():
-                    sst.setServiceError(msg='No input file in request ')
+                    sst.setServiceError(msg="No input file in request ")
                 else:
-                    fileName = suu.copyToSession(fileTag='file')
+                    fileName = suu.copyToSession(fileTag="file")
                     if fileName:
                         sst.setServiceCompletionFlag(True)
                         sst.setServiceStatusText("Upload successful")
                         #
-                        contentType = self._reqObj.getValue('content_type')
-                        fileFormat = self._reqObj.getValue('file_format')
+                        contentType = self._reqObj.getValue("content_type")
+                        fileFormat = self._reqObj.getValue("file_format")
                         self._setSessionStoreValue(contentType, (fileName, fileFormat))
                         #
                         sD = self._getSessionStoreDict()
-                        if 'session_history' in sD:
-                            shL = sD['session_history']
+                        if "session_history" in sD:
+                            shL = sD["session_history"]
                         else:
                             shL = []
-                        sst.setAppDataDict({'session_id': self._sessionId, 'session_history': shL}, format='json')
-                        self._setSessionStoreValue('status', 'uploading')
+                        sst.setAppDataDict(
+                            {"session_id": self._sessionId, "session_history": shL},
+                            format="json",
+                        )
+                        self._setSessionStoreValue("status", "uploading")
                         # self._trackServiceStatus('uploading', {'file': fileName})
-                        self._trackServiceStatus('uploading', file=fileName)
+                        self._trackServiceStatus("uploading", file=fileName)
                     else:
-                        sst.setServiceError(msg='File upload failed')
+                        sst.setServiceError(msg="File upload failed")
         except:
             logger.exception("FAILING")
             sst = ServiceSessionState()
-            sst.setServiceError(msg='File upload failed')
+            sst.setServiceError(msg="File upload failed")
 
         return sst
 
@@ -223,7 +235,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             pass
         return None
 
-    def __fetchModelFile(self, siteId, entryId, fileSource='archive'):
+    def __fetchModelFile(self, siteId, entryId, fileSource="archive"):
         """  Fetch model file first from archive then from the deposit file source ...
         """
         generateModel = True
@@ -233,64 +245,88 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         if len(entryId) > 30:
             return None
         try:
-            logger.debug('siteId %r ', siteId)
+            logger.debug("siteId %r ", siteId)
             # note explict use of siteId here --
-            dx = DataExchange(reqObj=self._reqObj, depDataSetId=entryId, fileSource='archive',
-                              siteId=siteId, verbose=True)
-            fl = dx.getContentTypeFileList(fileSource="archive", contentTypeList=["model"])
+            dx = DataExchange(
+                reqObj=self._reqObj,
+                depDataSetId=entryId,
+                fileSource="archive",
+                siteId=siteId,
+                verbose=True,
+            )
+            fl = dx.getContentTypeFileList(
+                fileSource="archive", contentTypeList=["model"]
+            )
             if len(fl) > 0:
-                pdbxFilePath = dx.fetch(contentType='model', formatType='pdbx', version="latest")
+                pdbxFilePath = dx.fetch(
+                    contentType="model", formatType="pdbx", version="latest"
+                )
             elif generateModel:
                 pdbxFilePath = self.__depuiGenerateModelFile(siteId, entryId)
 
             # Fallback on deposit directory
             if not pdbxFilePath:
-                dx = DataExchange(reqObj=self._reqObj, depDataSetId=entryId, fileSource='deposit',
-                                  siteId=siteId, verbose=True)
-                pdbxFilePath = dx.fetch(contentType='model', formatType='pdbx', version="latest")
+                dx = DataExchange(
+                    reqObj=self._reqObj,
+                    depDataSetId=entryId,
+                    fileSource="deposit",
+                    siteId=siteId,
+                    verbose=True,
+                )
+                pdbxFilePath = dx.fetch(
+                    contentType="model", formatType="pdbx", version="latest"
+                )
 
         except:
             logger.exception("Fetch model failing %r" % entryId)
         return pdbxFilePath
 
-
     def __depuiGenerateModelFile(self, siteId, entryId):
         """  Uses code in the deposition system to generate a model file in the session directory.
              returns path to filename or None if it fails
         """
-        logger.debug('generate %r from depui\n' % entryId)
+        logger.debug("generate %r from depui\n" % entryId)
         sessDir = self._reqObj.getSessionObj().getPath()
 
         # Create script to run. Django will need WWPDB_SITE_ID set before invoking
-        cmdPy = os.path.join(sessDir, 'generate.py')
-        fOut = open(cmdPy, 'w')
-        fOut.write('#!/usr/bin/env python\n')
-        fOut.write('import os, sys\n')
+        cmdPy = os.path.join(sessDir, "generate.py")
+        fOut = open(cmdPy, "w")
+        fOut.write("#!/usr/bin/env python\n")
+        fOut.write("import os, sys\n")
         # Setup the Django environment
-        fOut.write('os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wwpdb.apps.deposit.settings")\n')
-        fOut.write('import django\n')
-        fOut.write('django.setup()\n')
-        fOut.write('from wwpdb.apps.deposit.depui.generate_model import generate_model\n')
-        fOut.write('generate_model(depID="%s", sessionDir = "%s").write_out_cif_from_depui()' % (entryId, sessDir))
+        fOut.write(
+            'os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wwpdb.apps.deposit.settings")\n'
+        )
+        fOut.write("import django\n")
+        fOut.write("django.setup()\n")
+        fOut.write(
+            "from wwpdb.apps.deposit.depui.generate_model import generate_model\n"
+        )
+        fOut.write(
+            'generate_model(depID="%s", sessionDir = "%s").write_out_cif_from_depui()'
+            % (entryId, sessDir)
+        )
         fOut.close()
-        cmdfile = os.path.join(sessDir, 'generate.sh')
-        fOut = open(cmdfile, 'w')
-        fOut.write('#!/bin/sh\n')
-        fOut.write('export WWPDB_SITE_ID=%s\n' % siteId)
-        fOut.write('export PYTHONPATH=$TOP_WWPDB_PYTHON_DIR/wwpdb/apps/deposit:$PYTHONPATH\n')
-        fOut.write('python %s\n' % cmdPy)
+        cmdfile = os.path.join(sessDir, "generate.sh")
+        fOut = open(cmdfile, "w")
+        fOut.write("#!/bin/sh\n")
+        fOut.write("export WWPDB_SITE_ID=%s\n" % siteId)
+        fOut.write(
+            "export PYTHONPATH=$TOP_WWPDB_PYTHON_DIR/wwpdb/apps/deposit:$PYTHONPATH\n"
+        )
+        fOut.write("python %s\n" % cmdPy)
         fOut.close()
         os.chmod(cmdfile, 0o777)
 
-        logfile = os.path.join(sessDir, 'generate.log')
+        logfile = os.path.join(sessDir, "generate.log")
 
-        retCode = self.__runTimeout(cmdFile = cmdfile, logFile = logfile, timeout=30)
-        
-        logger.debug('response from depui %r\n' % retCode)
+        retCode = self.__runTimeout(cmdFile=cmdfile, logFile=logfile, timeout=30)
+
+        logger.debug("response from depui %r\n" % retCode)
         if retCode != 0:
             return None
         pI = PathInfo(siteId=self._siteId, sessionPath=sessDir, verbose=True)
-        pdbxFilePath = pI.getModelPdbxFilePath(dataSetId=entryId, fileSource='session')
+        pdbxFilePath = pI.getModelPdbxFilePath(dataSetId=entryId, fileSource="session")
         # DepUI can generate file even if deposition non-existant!! Make sure minimal size....
         if os.access(pdbxFilePath, os.R_OK):
             statinfo = os.stat(pdbxFilePath)
@@ -308,7 +344,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
         if not ok:
             sst.setServiceCompletionFlag(ok)
-            sst.setServiceError(msg='Session acquire failed')
+            sst.setServiceError(msg="Session acquire failed")
         else:
             sD = self._getSessionStoreDict()
             ok = False
@@ -316,99 +352,132 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             #
             #   Check for a test request
             #
-            pD['worker_test_mode'] = self._reqObj.getValueOrDefault('worker_test_mode', default=False)
-            pD['worker_test_duration'] = self._reqObj.getValueOrDefault('worker_test_duration', default=1)
-            pD['exp_method'] = self._reqObj.getValueOrDefault('exp_method', default="unassigned")
+            pD["worker_test_mode"] = self._reqObj.getValueOrDefault(
+                "worker_test_mode", default=False
+            )
+            pD["worker_test_duration"] = self._reqObj.getValueOrDefault(
+                "worker_test_duration", default=1
+            )
+            pD["exp_method"] = self._reqObj.getValueOrDefault(
+                "exp_method", default="unassigned"
+            )
             #
-            pD['request_dataset_id'] = self._reqObj.getValueOrDefault('request_dataset_id', default="unassigned")
-            pD['request_content_type'] = self._reqObj.getValueOrDefault('request_content_type', default="unassigned")
-            pD['request_format_type'] = self._reqObj.getValueOrDefault('request_format_type', default="unassigned")
+            pD["request_dataset_id"] = self._reqObj.getValueOrDefault(
+                "request_dataset_id", default="unassigned"
+            )
+            pD["request_content_type"] = self._reqObj.getValueOrDefault(
+                "request_content_type", default="unassigned"
+            )
+            pD["request_format_type"] = self._reqObj.getValueOrDefault(
+                "request_format_type", default="unassigned"
+            )
             #
-            entryId = pD['request_dataset_id']
-            contentType = pD['request_content_type']
-            formatType = pD['request_format_type']
+            entryId = pD["request_dataset_id"]
+            contentType = pD["request_content_type"]
+            formatType = pD["request_format_type"]
             #
-            if entryId != "unassigned" and contentType.startswith('report-entry-'):
+            if entryId != "unassigned" and contentType.startswith("report-entry-"):
                 ok = True
-                fName = entryId + '_' + contentType + '.' + formatType
-                logger.debug("Entry content type %r format type %r and dataset id %r status %r" % (contentType, formatType, entryId, ok))
+                fName = entryId + "_" + contentType + "." + formatType
+                logger.debug(
+                    "Entry content type %r format type %r and dataset id %r status %r"
+                    % (contentType, formatType, entryId, ok)
+                )
 
                 cIDS = ConfigInfoDataSet()
                 siteId = cIDS.getSiteId(entryId)
                 logger.debug("Entry siteid is %r" % siteId)
                 # First check if we are handling this entry... If
                 # config variable not set - will return ['None']
-                siteCoverage = [x.strip() for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(',')]
+                siteCoverage = [
+                    x.strip()
+                    for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(
+                        ","
+                    )
+                ]
 
-                logger.debug("Entry %r my site %r cover %r" % (siteId, self._siteId, siteCoverage))
+                logger.debug(
+                    "Entry %r my site %r cover %r"
+                    % (siteId, self._siteId, siteCoverage)
+                )
                 if siteId != self._siteId and siteId not in siteCoverage:
-                    logger.debug("Entry %r resides on another site %r" % (entryId, siteId))
+                    logger.debug(
+                        "Entry %r resides on another site %r" % (entryId, siteId)
+                    )
 
                     # Simple lookup if we can redirect
-                    siteMap = self._cI.get('PROJECT_CONTENTWS_SERVICE_DICTIONARY')
+                    siteMap = self._cI.get("PROJECT_CONTENTWS_SERVICE_DICTIONARY")
                     contentWsUrl = siteMap.get(siteId, None)
-                    logger.debug('Alternate site to contact is %r' % contentWsUrl)
+                    logger.debug("Alternate site to contact is %r" % contentWsUrl)
                     if contentWsUrl:
-                        pD['session_proxy_url'] = contentWsUrl
+                        pD["session_proxy_url"] = contentWsUrl
                     else:
                         ok = False
                 else:
                     # Look up with siteId info for depositions
-                    pdbxFilePath = self.__fetchModelFile(siteId, entryId, fileSource='archive')
+                    pdbxFilePath = self.__fetchModelFile(
+                        siteId, entryId, fileSource="archive"
+                    )
                     if os.access(pdbxFilePath, os.R_OK):
-                        pD['session_pdbx_file_path'] = str(pdbxFilePath)
+                        pD["session_pdbx_file_path"] = str(pdbxFilePath)
                     else:
                         ok = False
 
-            elif contentType.startswith('report-summary-'):
+            elif contentType.startswith("report-summary-"):
                 ok = True
-                fName = contentType + '.' + formatType
-                logger.debug("Summary content type %r format type %r status %r" % (contentType, formatType, ok))
+                fName = contentType + "." + formatType
+                logger.debug(
+                    "Summary content type %r format type %r status %r"
+                    % (contentType, formatType, ok)
+                )
 
             if ok:
                 resultPath = os.path.join(self._sessionPath, fName)
-                pD['report_file'] = fName
-                pD['report_path'] = resultPath
+                pD["report_file"] = fName
+                pD["report_path"] = resultPath
 
                 # Not really used in this example -
                 dstPathList = [resultPath]
-                pD['dst_file_path_list'] = dstPathList
+                pD["dst_file_path_list"] = dstPathList
                 #
-                pD['session_path'] = self._sessionPath
-                pD['session_store_prefix'] = self._sdsPrefix
-                pD['session_history_path'] = self._reqObj.getSessionUserPath()
-                pD['session_id'] = self._sessionId
+                pD["session_path"] = self._sessionPath
+                pD["session_store_prefix"] = self._sdsPrefix
+                pD["session_history_path"] = self._reqObj.getSessionUserPath()
+                pD["session_id"] = self._sessionId
                 #
                 logger.debug("Request payload %r" % pD)
 
-                pStatus = sD['status']
+                pStatus = sD["status"]
                 try:
                     # preset the status as the request may be serviced immediately
-                    self._setSessionStoreValue('status', 'submitted')
-                    self._trackServiceStatus('submitted')
+                    self._setSessionStoreValue("status", "submitted")
+                    self._trackServiceStatus("submitted")
                     ok = self.__publishRequest(pD)
                     logger.debug("Publish method return status %r" % ok)
                 except:
                     logger.exception("Failed publish method")
                     ok = False
 
-                if (not ok):
+                if not ok:
                     # restore the prior status
-                    self._setSessionStoreValue('status', pStatus)
+                    self._setSessionStoreValue("status", pStatus)
 
-            if 'session_history' in sD:
-                shL = sD['session_history']
+            if "session_history" in sD:
+                shL = sD["session_history"]
             else:
                 shL = []
             #
             if ok:
-                sst.setAppDataDict({'session_id': self._sessionId, 'session_history': shL}, format='json')
+                sst.setAppDataDict(
+                    {"session_id": self._sessionId, "session_history": shL},
+                    format="json",
+                )
                 sst.setServiceCompletionFlag(ok)
                 sst.setServiceStatusText("Submit successful")
 
             else:
                 sst.setServiceCompletionFlag(False)
-                sst.setServiceError(msg='Submit operation failed')
+                sst.setServiceError(msg="Submit operation failed")
         #
         logger.debug("Completed request method")
         return sst
@@ -419,7 +488,12 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         try:
             msg = json.dumps(pD)
             mp = MessagePublisher()
-            ok = mp.publish(msg, exchangeName="biocurationws_exchange", queueName="contentws_queue", routingKey="contentws_requests")
+            ok = mp.publish(
+                msg,
+                exchangeName="biocurationws_exchange",
+                queueName="contentws_queue",
+                routingKey="contentws_requests",
+            )
         except:
             logger.exception("Failing publish request")
         return ok
@@ -433,32 +507,32 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
         if not ok:
             sst.setServiceCompletionFlag(ok)
-            sst.setServiceError(msg='Session acquire failed')
+            sst.setServiceError(msg="Session acquire failed")
         else:
             try:
                 sD = self._getSessionStoreDict()
-                if 'session_history' in sD:
-                    shL = sD['session_history']
+                if "session_history" in sD:
+                    shL = sD["session_history"]
                 else:
                     shL = []
-                dD = {'session_id': self._sessionId, 'session_history': shL}
+                dD = {"session_id": self._sessionId, "session_history": shL}
                 #
                 rD = {}
-                fpList = glob.glob(self._sessionPath + '/*')
+                fpList = glob.glob(self._sessionPath + "/*")
                 for fp in fpList:
                     if os.access(fp, os.R_OK):
                         pth, fName = os.path.split(fp)
                         (fn, ft) = os.path.splitext(fName)
                         rD[fName] = (fName, ft[1:])
-                dD['index'] = rD
-                sst.setAppDataDict(dD, format='json')
+                dD["index"] = rD
+                sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
                 sst.setServiceStatusText("Index length %d" % len(rD))
             except:
-                dD['index'] = rD
-                sst.setAppDataDict(dD, format='json')
+                dD["index"] = rD
+                sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
-                sst.setServiceError(msg='Index is empty')
+                sst.setServiceError(msg="Index is empty")
 
         logger.debug("Completed index method")
         return sst
@@ -474,9 +548,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
             if not ok:
                 sst.setServiceCompletionFlag(ok)
-                sst.setServiceError(msg='Session acquire failed')
+                sst.setServiceError(msg="Session acquire failed")
             else:
-                ct = self._reqObj.getValue('contenttype')
+                ct = self._reqObj.getValue("contenttype")
                 sD = self._getSessionStoreDict()
                 logger.debug("Session store keys %r " % sD.keys())
                 logger.debug("Content type %r " % ct)
@@ -484,18 +558,18 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 if ct in sD:
                     fn, fmt = sD[ct]
                 else:
-                    fn = self._reqObj.getValue('filename')
+                    fn = self._reqObj.getValue("filename")
 
                 fp = os.path.join(self._sessionPath, fn)
                 logger.debug("download target path %r" % fp)
                 md5Digest = getMD5(fp, block_size=4096, hr=True)
                 sst.setDownload(fn, fp, contentType=None, md5Digest=md5Digest)
                 # self._trackServiceStatus('downloading', {'file': fn})
-                self._trackServiceStatus('downloading', file=fn)
+                self._trackServiceStatus("downloading", file=fn)
         except:
             logger.exception("FAILING")
             sst.setServiceCompletionFlag(False)
-            sst.setServiceError(msg='File download failed')
+            sst.setServiceError(msg="File download failed")
 
         return sst
 
@@ -507,31 +581,37 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
         if not ok:
             sst.setServiceCompletionFlag(ok)
-            sst.setServiceError(msg='Session acquire failed')
+            sst.setServiceError(msg="Session acquire failed")
         else:
-            if self._reqObj.getValue('service_user_id') == "CONTENTWS_ANONYMOUS":
-                dD = {'session_id': self._sessionId, 'session_history': [], 'activity_summary': {}}
-                sst.setAppDataDict(dD, format='json')
+            if self._reqObj.getValue("service_user_id") == "CONTENTWS_ANONYMOUS":
+                dD = {
+                    "session_id": self._sessionId,
+                    "session_history": [],
+                    "activity_summary": {},
+                }
+                sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
-                sst.setServiceError(msg='Activity history is not available')
+                sst.setServiceError(msg="Activity history is not available")
             else:
                 try:
                     sD = self._getSessionStoreDict()
-                    if 'session_history' in sD:
-                        shL = sD['session_history']
+                    if "session_history" in sD:
+                        shL = sD["session_history"]
                     else:
                         shL = []
-                    dD = {'session_id': self._sessionId, 'session_history': shL}
+                    dD = {"session_id": self._sessionId, "session_history": shL}
                     #
-                    dD['activity_summary'] = self._getServiceActivitySummary()
-                    sst.setAppDataDict(dD, format='json')
+                    dD["activity_summary"] = self._getServiceActivitySummary()
+                    sst.setAppDataDict(dD, format="json")
                     sst.setServiceCompletionFlag(True)
-                    sst.setServiceStatusText("Activity history length %d" % len(dD['activity_summary']))
+                    sst.setServiceStatusText(
+                        "Activity history length %d" % len(dD["activity_summary"])
+                    )
                 except:
-                    dD['activity_summary'] = {}
-                    sst.setAppDataDict(dD, format='json')
+                    dD["activity_summary"] = {}
+                    sst.setAppDataDict(dD, format="json")
                     sst.setServiceCompletionFlag(True)
-                    sst.setServiceError(msg='Activity history is empty')
+                    sst.setServiceError(msg="Activity history is empty")
 
         logger.debug("Completed history summary method")
         return sst
@@ -539,34 +619,44 @@ class ContentServiceAppWorker(ServiceWorkerBase):
     def __runTimeout(self, cmdFile=None, logFile=None, timeout=10):
         """ Execute the command as a subprocess with a timeout.
         """
-        logger.debug('STARTING with time out set at %d (seconds)' % timeout)
+        logger.debug("STARTING with time out set at %d (seconds)" % timeout)
         #
         start = datetime.datetime.now()
         try:
-            process = Popen(cmdFile, stdout=PIPE, stderr=PIPE, shell=False, close_fds=True, preexec_fn=os.setsid)
+            process = Popen(
+                cmdFile,
+                stdout=PIPE,
+                stderr=PIPE,
+                shell=False,
+                close_fds=True,
+                preexec_fn=os.setsid,
+            )
             while process.poll() == None:
                 time.sleep(0.1)
                 now = datetime.datetime.now()
-                if (now - start).seconds> timeout:
+                if (now - start).seconds > timeout:
                     os.killpg(process.pid, signal.SIGKILL)
                     os.waitpid(-1, os.WNOHANG)
-                    logger.debug('Execution terminated by timeout %d (seconds)'% timeout)
+                    logger.debug(
+                        "Execution terminated by timeout %d (seconds)" % timeout
+                    )
                     if logFile is not None:
-                        ofh=open(logFile,'a')
-                        ofh.write('Execution terminated by timeout %d (seconds)\n' % timeout)
+                        ofh = open(logFile, "a")
+                        ofh.write(
+                            "Execution terminated by timeout %d (seconds)\n" % timeout
+                        )
                         ofh.close()
                     #
                     return None
                 #
                 #
         except:
-            logger.error('Exception', exc_info=True)
+            logger.error("Exception", exc_info=True)
         #
         output = process.communicate()
-        logger.debug('completed with stdout data %r'  % output[0] )
-        logger.debug('completed with stderr data %r\n' % output[1] )
-        logger.debug('completed with return code %r\n' % process.returncode )
+        logger.debug("completed with stdout data %r" % output[0])
+        logger.debug("completed with stderr data %r\n" % output[1])
+        logger.debug("completed with return code %r\n" % process.returncode)
         return process.returncode
-
 
     #
