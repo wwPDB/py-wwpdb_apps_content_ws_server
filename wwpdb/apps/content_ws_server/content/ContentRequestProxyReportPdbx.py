@@ -14,16 +14,12 @@ __email__ = "peisach@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import sys
-import time
 import logging
+import time
 
-from mmcif.io.IoAdapterCore import IoAdapterCore
+from onedep_biocuration.api.ContentRequest import ContentRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
-#from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
 
-from onedep_biocuration.api.ContentRequest import  ContentRequest
-#
 logger = logging.getLogger()
 
 
@@ -42,23 +38,25 @@ class ContentRequestProxyReportPdbx(object):
         self.__maxWait = 60
         logger.info("Starting with siteId %r" % self.__siteId)
         #
-    
+
     def __readApiKey(self, filePath):
         """Reads API key from file"""
-        apiKey = None
+        api_key = None
         try:
-            with open(filePath, 'r') as fp:
-                apiKey = fp.read()
+            with open(filePath, "r") as fp:
+                api_key = fp.read()
         except:
             pass
-        return apiKey
+        return api_key
 
-
-    def retrieveProxyReport(self, dataSetId, apiUrl, contentType, formatType, reportPath):
+    def retrieveProxyReport(
+        self, dataSetId, apiUrl, contentType, formatType, reportPath
+    ):
         """Retrieve a report from a remote server"""
-        logger.debug("dataSetId %r apiUrl %r contentType %r reportPath %r" % (
-                dataSetId, apiUrl, contentType, reportPath))
-
+        logger.debug(
+            "dataSetId %r apiUrl %r contentType %r reportPath %r"
+            % (dataSetId, apiUrl, contentType, reportPath)
+        )
 
         apiKeyFileName = self.__cI.get("SITE_WS_CONTENT_WWPDB_KEY")
         apiKey = self.__readApiKey(apiKeyFileName)
@@ -66,19 +64,19 @@ class ContentRequestProxyReportPdbx(object):
             logger.error("Could not read apiKeyFile %r" % apiKeyFileName)
             return False
 
-        cr = ContentRequest(apiKey = apiKey, apiUrl = apiUrl)
+        cr = ContentRequest(apiKey=apiKey, apiUrl=apiUrl)
 
         # Need a session....
         rD = cr.createSession()
-        if not rD or rD['onedep_error_flag']:
+        if not rD or rD["onedep_error_flag"]:
             logger.error("Response from create session %r" % rD)
             return False
 
-        sessionId = rD['session_id']
+        sessionId = rD["session_id"]
         logger.debug("sessionId %r" % sessionId)
 
         rD = cr.requestEntryContent(dataSetId, contentType, formatType)
-        if rD['onedep_error_flag']:
+        if rD["onedep_error_flag"]:
             logger.error("Submitted content service failed request %r" % rD)
             return False
 
@@ -90,13 +88,13 @@ class ContentRequestProxyReportPdbx(object):
         total = 0
         it = 0
         sl = 2
-        while (True):
+        while True:
             #    Pause -
             it += 1
             pause = it * it * sl
             time.sleep(pause)
             rD = cr.getStatus()
-            if rD['status'] in ['completed', 'failed']:
+            if rD["status"] in ["completed", "failed"]:
                 break
             logger.debug("[%4d] Pausing for %4d (seconds)\n" % (it, pause))
             total += pause
@@ -107,12 +105,12 @@ class ContentRequestProxyReportPdbx(object):
         #
         logger.debug("Received response from remote %r" % rD)
 
-        if rD['status'] == 'failed' or rD['onedep_error_flag']:
-            logger.error("Remote service request failed %r" %rD)
+        if rD["status"] == "failed" or rD["onedep_error_flag"]:
+            logger.error("Remote service request failed %r" % rD)
             return False
 
         rD = cr.getOutputByType(reportPath, contentType, formatType=formatType)
-        if rD['onedep_error_flag']:
+        if rD["onedep_error_flag"]:
             logger.debug("getOutputByType failed %r" % rD)
             return False
 
