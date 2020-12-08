@@ -15,8 +15,10 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
 import logging
+
 #
 logger = logging.getLogger()
+
 
 class ContentRequestPolicyFilter(object):
     """
@@ -34,31 +36,28 @@ class ContentRequestPolicyFilter(object):
         if not rD:
             return rD
 
-        logger.debug('Content in %r' %rD)
-        if 'sasbdb' in contentType:
+        logger.debug("Content in %r" % rD)
+        if "sasbdb" in contentType:
             # Policy 1: suppress title and author
-            pDS = rD.get('pdbx_database_status', None)
+            pDS = rD.get("pdbx_database_status", None)
             if pDS:
-                logger.debug('Filtering %r' % pDS)
-                tS = pDS[0].get('title_suppression', None)
-                if tS and tS in ['Y']:
-                    logger.debug('Removing author and title and contact')
-                    rD['audit_author'] = [{}]
-                    rD['pdbx_contact_author'] = [{}]
-                    rD['struct'][0]['title'] = ''
+                logger.debug("Filtering %r" % pDS)
+                tS = pDS[0].get("title_suppression", None)
+                if tS and tS in ["Y"]:
+                    logger.debug("Removing author and title and contact")
+                    rD["audit_author"] = [{}]
+                    rD["pdbx_contact_author"] = [{}]
+                    rD["struct"][0]["title"] = ""
             # Policy 2: If not sas - you get nothing
             removeAll = True
-            pDSF = rD.get('pdbx_depui_status_flags', None)
+            pDSF = rD.get("pdbx_depui_status_flags", None)
             if pDSF:
-                hSD = pDSF[0].get('has_sas_data', None)
-                if hSD and hSD in ['Y']:
+                hSD = pDSF[0].get("has_sas_data", None)
+                if hSD and hSD in ["Y"]:
                     removeAll = False
             if removeAll:
                 rD = {}
 
-        logger.debug('Content out %r' %rD)
+        logger.debug("Content out %r" % rD)
 
         return rD
-
-
-
