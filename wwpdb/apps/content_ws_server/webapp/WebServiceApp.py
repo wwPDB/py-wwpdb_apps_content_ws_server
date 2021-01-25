@@ -25,12 +25,16 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
 import logging
+
 #
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.ws_utils.ServiceRequest import ServiceRequest
 from wwpdb.utils.ws_utils.ServiceResponse import ServiceResponse
+
 #
-from wwpdb.apps.content_ws_server.webapp.ContentServiceAppWorker import ContentServiceAppWorker
+from wwpdb.apps.content_ws_server.webapp.ContentServiceAppWorker import (
+    ContentServiceAppWorker,
+)
 
 logger = logging.getLogger()
 
@@ -51,8 +55,10 @@ class WebServiceApp(object):
         siteId = self.__reqObj.getSiteId()
         #
         cI = ConfigInfo(siteId)
-        self.__reqObj.setTopSessionPath(cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH'))
-        self.__reqObj.setRequestPathPrefix(cI.get('SITE_WEB_SERVICE_PATH_PREFIX', default='/service'))
+        self.__reqObj.setTopSessionPath(cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH"))
+        self.__reqObj.setRequestPathPrefix(
+            cI.get("SITE_WEB_SERVICE_PATH_PREFIX", default="/service")
+        )
         self.__reqObj.setDefaultReturnFormat(return_format="json")
         #
 
@@ -68,7 +74,7 @@ class WebServiceApp(object):
         requestPath = self.__reqObj.getRequestPath()
         logger.debug("Processing requiest path : %s" % requestPath)
         #
-        if requestPath.startswith('/contentws'):
+        if requestPath.startswith("/contentws"):
             swrk = ContentServiceAppWorker(reqObj=self.__reqObj)
         else:
             swrk = ContentServiceAppWorker(reqObj=self.__reqObj)
@@ -76,7 +82,10 @@ class WebServiceApp(object):
         #  Each class implements a run() method that returns a ServiceSessionState object -
         #
         sst = swrk.run()
-        logger.debug("Service response object for request path: %s\n   %r" % (requestPath, sst.getAppDataDict()))
+        logger.debug(
+            "Service response object for request path: %s\n   %r"
+            % (requestPath, sst.getAppDataDict())
+        )
         sr = self.__buildResponse(sst)
         #
         # Return only the dictionary from the response object -
@@ -88,37 +97,39 @@ class WebServiceApp(object):
 
         """
         rD = {}
-        sr = ServiceResponse(returnFormat='json', injectStatus=False)
+        sr = ServiceResponse(returnFormat="json", injectStatus=False)
         #
         if sst.getServiceErrorFlag():
-            rD['errorflag'] = True
-            rD['statusmessage'] = sst.getServiceErrorMessage()
+            rD["errorflag"] = True
+            rD["statusmessage"] = sst.getServiceErrorMessage()
             sr.setData(rD)
-        elif sst.getResponseFormat() in ['json']:
-            rD['errorflag'] = False
+        elif sst.getResponseFormat() in ["json"]:
+            rD["errorflag"] = False
             sm = sst.getServiceStatusText()
             if sm and len(sm) > 0:
-                rD['statusmessage'] = sm
+                rD["statusmessage"] = sm
             else:
-                rD['statusmessage'] = "ok"
+                rD["statusmessage"] = "ok"
             #
             rD.update(sst.getAppDataDict())
             sr.setData(rD)
-        elif sst.getResponseFormat() in ['files']:
-            sr.setReturnFormat('binary')
+        elif sst.getResponseFormat() in ["files"]:
+            sr.setReturnFormat("binary")
             fL = sst.getDownloadList()
             ok = False
             for f in fL[0:1]:
                 # f = (fileName, filePath, contentType, md5Digest)
-                ok = sr.setBinaryFile(f[1], attachmentFlag=False, serveCompressed=True, md5Digest=f[3])
+                ok = sr.setBinaryFile(
+                    f[1], attachmentFlag=False, serveCompressed=True, md5Digest=f[3]
+                )
             if not ok:
-                sr.setReturnFormat('json')
-                rD['errorflag'] = True
-                rD['statusmessage'] = 'Download file not found'
+                sr.setReturnFormat("json")
+                rD["errorflag"] = True
+                rD["statusmessage"] = "Download file not found"
                 sr.setData(rD)
         else:
-            rD['errorflag'] = True
-            rD['statusmessage'] = 'Miscellaneous error'
+            rD["errorflag"] = True
+            rD["statusmessage"] = "Miscellaneous error"
             sr.setData(rD)
         #
         #
