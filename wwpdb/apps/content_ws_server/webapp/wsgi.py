@@ -42,7 +42,7 @@ class MyRequestApp(object):
     """  Process request and response from WSGI server using WebOb Request/Response objects.
     """
 
-    def __init__(self, serviceName="my service", authVerifyFlag=False):
+    def __init__(self, serviceName="ContentServiceApp", authVerifyFlag=True):
         """
 
         """
