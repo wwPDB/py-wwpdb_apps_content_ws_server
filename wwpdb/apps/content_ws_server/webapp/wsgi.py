@@ -217,9 +217,5 @@ class MyRequestApp(object):
 
 ##
 ##
+application = MyRequestApp(serviceName="ContentServiceApp", authVerifyFlag=USEKEY)
 
-def run_application():
-    application = MyRequestApp(serviceName="ContentServiceApp", authVerifyFlag=USEKEY)
-
-
-run_application()
