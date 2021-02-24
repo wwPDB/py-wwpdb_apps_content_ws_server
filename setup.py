@@ -47,7 +47,6 @@ setup(
         #        'console_scripts': ['ValidationServiceHandler=wwpdb.apps.val_ws_server.service.ValidationServiceHandler:main']
     },
     #
-    # For now, include validation package. Later on may separate web code from backend
     install_requires=[
         "wwpdb.io",
         "wwpdb.utils.config",
@@ -71,7 +70,11 @@ setup(
     tests_require=["tox", "wwpdb.utils.testing"],
     #
     # Not configured ...
-    extras_require={"dev": ["check-manifest"], "test": ["coverage"],},
+    extras_require={
+        "dev": ["check-manifest"],
+        "test": ["coverage"],
+        "server": ["webob"]
+    },
     # Added for
     command_options={
         "build_sphinx": {
