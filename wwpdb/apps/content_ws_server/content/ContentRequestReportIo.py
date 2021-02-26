@@ -17,6 +17,7 @@ __version__ = "V0.07"
 
 import logging
 import datetime
+from wwpdb.apps.content_ws_server.content_definitions.ContentDefintions import get_content_definition_file_path
 
 try:
     import json
@@ -65,12 +66,20 @@ class ContentRequestReportIo(object):
         else:
             return []
 
+    def __get_content_definition_file(self):
+        """
+        helper method for getting path to content definition file
+        :return:
+        """
+        # return self.__cI.get('SITE_WS_CONTENT_TYPE_DEFINITION_FILE_PATH')
+        return get_content_definition_file_path()
+
     def __readContentDefinitionDictionary(self):
         """  Read the dictionary containing web service content type definitions.
 
              Returns: d[<content_type>] = {categoryName: [at1,at2,...], ...}  or a empty dictionary.
         """
-        fp = self.__cI.get('SITE_WS_CONTENT_TYPE_DEFINITION_FILE_PATH')
+        fp = self.__get_content_definition_file()
         try:
             with open(fp, "r") as infile:
                 return json.load(infile)
@@ -85,7 +94,7 @@ class ContentRequestReportIo(object):
 
              Returns: True for success or False otherwise
         """
-        fp = self.__cI.get('SITE_WS_CONTENT_TYPE_DEFINITION_FILE_PATH')
+        fp = self.__get_content_definition_file()
 
         try:
             if backup:
