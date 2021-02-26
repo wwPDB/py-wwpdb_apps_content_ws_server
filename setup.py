@@ -62,7 +62,7 @@ setup(
     # include_package_data = True,
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
-        "": ["*.md", "*.rst", "*.txt", "*.cfg"],
+        "": ["*.md", "*.rst", "*.txt", "*.cfg", "*.json"],
     },
     #
     # These basic tests require no database services -
