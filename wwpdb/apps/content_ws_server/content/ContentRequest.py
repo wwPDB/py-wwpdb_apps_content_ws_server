@@ -151,7 +151,7 @@ class ContentRequest(object):
             tStatus = self.__sds.get('status')
             logger.info("Read session store status as  %r" % tStatus)
         except:
-            logger.exception("Faled to update session status %r" % iD)
+            logger.exception("Failed to update session status %r" % iD)
         #
         logger.info("Updated session store with: %r" % iD)
         return True
