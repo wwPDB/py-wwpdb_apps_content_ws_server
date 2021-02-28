@@ -2,7 +2,7 @@
 # File:  ContentRequestServiceHandler (adapted from DetachedMessageConsumerExample.py)
 # Date:  13-Feb-2017
 #
-#  Contolling wrapper for content request service consumer client -
+#  Controlling wrapper for content request service consumer client -
 #
 #  Updates:
 #  18-Feb-2017  jdw switch to using default ampq connection url
