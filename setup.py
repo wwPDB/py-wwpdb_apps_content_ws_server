@@ -28,7 +28,7 @@ setup(
     long_description="See:  README.md",
     author="Ezra Peisach",
     author_email="ezra.peisach@rcsb.org",
-    url="https://github.com/rcsb/py-wwpdb_apps_content_ws_server",
+    url="https://github.com/wwPDB/py-wwpdb_apps_content_ws_server",
     #
     license="Apache 2.0",
     classifiers=[
@@ -38,7 +38,6 @@ setup(
         "Natural Language :: English",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -47,6 +46,7 @@ setup(
         #        'console_scripts': ['ValidationServiceHandler=wwpdb.apps.val_ws_server.service.ValidationServiceHandler:main']
     },
     #
+    python_requires='>=3.4',
     install_requires=[
         "wwpdb.io",
         "wwpdb.utils.config",
