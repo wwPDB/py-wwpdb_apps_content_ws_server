@@ -29,6 +29,8 @@ from wwpdb.utils.message_queue.MessageQueueConnection import MessageQueueConnect
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 
 from wwpdb.apps.content_ws_server.content.ContentRequest import ContentRequest
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_exchange_name, \
+    get_exchange_topic, get_routing_key
 
 logger = logging.getLogger()
 logging.basicConfig(
@@ -69,8 +71,8 @@ class MessageConsumerWorker(object):
         mqc = MessageQueueConnection()
         url = mqc._getDefaultConnectionUrl()
         self.__mc = MessageConsumer(amqpUrl=url)
-        self.__mc.setQueue(queueName="contentws_queue", routingKey="contentws_requests")
-        self.__mc.setExchange(exchange="biocurationws_exchange", exchangeType="topic")
+        self.__mc.setQueue(queueName=get_queue_name(), routingKey=get_routing_key())
+        self.__mc.setExchange(exchange=get_exchange_name(), exchangeType=get_exchange_topic())
         #
 
     def run(self):

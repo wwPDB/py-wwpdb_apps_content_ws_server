@@ -35,6 +35,7 @@ import signal
 import os
 
 from wwpdb.utils.config.ConfigInfoDataSet import ConfigInfoDataSet
+from wwpdb.utils.config.ConfigInfo import getSiteId
 
 from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
 from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
@@ -44,6 +45,9 @@ from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
 from wwpdb.utils.message_queue.MessagePublisher import MessagePublisher
 from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.io.file.DataExchange import DataExchange
+
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_routing_key, \
+    get_exchange_name, get_exchange_topic
 
 logger = logging.getLogger(__name__)
 
@@ -486,13 +490,14 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         ok = False
         logger.debug("Publishing request with payload %r" % pD)
         try:
+            siteID = getSiteId()
             msg = json.dumps(pD)
             mp = MessagePublisher()
             ok = mp.publish(
                 msg,
-                exchangeName="biocurationws_exchange",
-                queueName="contentws_queue",
-                routingKey="contentws_requests",
+                exchangeName=get_exchange_name(),
+                queueName=get_queue_name(site_id=siteID),
+                routingKey=get_routing_key(),
             )
         except:
             logger.exception("Failing publish request")
