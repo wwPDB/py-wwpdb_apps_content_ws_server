@@ -22,8 +22,6 @@ ENV PATH="$VENV/bin:$PATH"
 RUN python -m venv $VENV
 
 # setup pip
-RUN pip config --site set global.trusted-host $CS_HOST_BASE
-RUN pip config --site set global.extra-index-url http://${CS_USER}:${CS_PW}@${CS_DISTRIB_URL}
 RUN pip config --site set global.no-cache-dir false
 
 # install the server
