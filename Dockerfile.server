@@ -5,18 +5,8 @@ RUN apk add --update --no-cache cmake make git openssh bash gcc g++ musl-dev lin
 # force using bash shell
 SHELL ["/bin/bash", "-c"]
 
-ARG CS_USER
-ARG CS_PW
-
-ENV CS_USER=$CS_USER
-ENV CS_PW=$CS_PW
-ENV CS_HOST_BASE=static.rcsb.org
-ENV CS_DISTRIB_URL=$CS_HOST_BASE/da_distrib_devel/dist/simple/
-
-# pass through environment variables
-ENV ONEDEP_PATH=/wwpdb/onedep
-ENV SITE_CONFIG_PATH=${ONEDEP_PATH}/site-config
-ENV VENV=$ONEDEP_PATH/venv
+# useful environment variables
+ENV VENV=/wwpdb/onedep/venv
 ENV PATH="$VENV/bin:$PATH"
 
 RUN python -m venv $VENV
@@ -43,8 +33,6 @@ ENV ONEDEP_PATH=/wwpdb/onedep
 ENV VENV=$ONEDEP_PATH/venv
 ENV PATH="$VENV/bin:$PATH"
 
-ENV SITE_CONFIG_DIR=$ONEDEP_PATH/site-config
-ENV TOP_WWPDB_SITE_CONFIG_DIR=$ONEDEP_PATH/site-config
 ENV SITE_CONFIG='. ${TOP_WWPDB_SITE_CONFIG_DIR}/init/env.sh --siteid ${WWPDB_SITE_ID} --location ${WWPDB_SITE_LOC}'
 ENV WRITE_SITE_CONFIG_CACHE='ConfigInfoFileExec --siteid $WWPDB_SITE_ID --locid $WWPDB_SITE_LOC --writecache'
 

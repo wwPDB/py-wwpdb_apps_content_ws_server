@@ -7,12 +7,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.server
-      args:
-        CS_USER: ${CS_USER}
-        CS_PW: ${CS_PW}
     environment:
       WWPDB_SITE_ID: ${WWPDB_SITE_ID}
       WWPDB_SITE_LOC: ${WWPDB_SITE_LOC}
+      TOP_WWPDB_SITE_CONFIG_DIR: ${TOP_WWPDB_SITE_CONFIG_DIR}
     ports:
       - target: 8000
         published: 8000
@@ -22,7 +20,7 @@ services:
       - onedep_resources_ro:/wwpdb/onedep/resources_ro
       - type: bind
         source: ./env/site-config
-        target: /wwpdb/onedep/site-config
+        target: ${TOP_WWPDB_SITE_CONFIG_DIR}
 
   # server
   onedep_api_consumer:
@@ -30,19 +28,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.consumer
-      args:
-        CS_USER: ${CS_USER}
-        CS_PW: ${CS_PW}
     environment:
       WWPDB_SITE_ID: ${WWPDB_SITE_ID}
       WWPDB_SITE_LOC: ${WWPDB_SITE_LOC}
+      TOP_WWPDB_SITE_CONFIG_DIR: ${TOP_WWPDB_SITE_CONFIG_DIR}
     volumes:
       - onedep_data:/wwpdb/onedep/data
       - onedep_sessions:/wwpdb/onedep/sessions
       - onedep_resources_ro:/wwpdb/onedep/resources_ro
       - type: bind
         source: ./env/site-config
-        target: /wwpdb/onedep/site-config
+        target: ${TOP_WWPDB_SITE_CONFIG_DIR}
 
 volumes:
   onedep_data:
