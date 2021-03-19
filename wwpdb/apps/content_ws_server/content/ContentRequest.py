@@ -16,21 +16,24 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import copy
 import os.path
+
+import json
+import logging
 import os
 import time
-import logging
-import copy
-import json
 #
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.ws_utils.ServiceDataStore import ServiceDataStore
 from wwpdb.utils.ws_utils.ServiceHistory import ServiceHistory
-#
-from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+
+from wwpdb.apps.content_ws_server.content.ContentRequestPolicyFilter import ContentRequestPolicyFilter
 from wwpdb.apps.content_ws_server.content.ContentRequestProxyReportPdbx import ContentRequestProxyReportPdbx
 from wwpdb.apps.content_ws_server.content.ContentRequestReportDb import ContentRequestReportDb
-from wwpdb.apps.content_ws_server.content.ContentRequestPolicyFilter import ContentRequestPolicyFilter
+#
+from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+
 #
 logger = logging.getLogger()
 
@@ -68,7 +71,7 @@ class ContentRequest(object):
             # self.__sD = self.__sds.getDictionary()
             # logger.info("Session dictionary %r" % self.__sD)
             #
-            #logger.info("Preparing copy of dictionary")
+            # logger.info("Preparing copy of dictionary")
             self.__pD = copy.deepcopy(pD)
             #
             if self.__debugPayload:
@@ -174,15 +177,15 @@ class ContentRequest(object):
             proxyReportUrl = pD.get('session_proxy_url')
 
             if proxyReportUrl and contentType.startswith("report-entry-"):
-              logger.debug("Forwarding request to another server for an entry")
-              logger.debug("pD is %r" % pD)
-              formatType = pD.get('request_format_type')
+                logger.debug("Forwarding request to another server for an entry")
+                logger.debug("pD is %r" % pD)
+                formatType = pD.get('request_format_type')
 
-              cr = ContentRequestProxyReportPdbx()
-              # Need to test for rejection - id not found and forward back errors
-              status = cr.retrieveProxyReport(dataSetId, proxyReportUrl, contentType, formatType, reportPath)
+                cr = ContentRequestProxyReportPdbx()
+                # Need to test for rejection - id not found and forward back errors
+                status = cr.retrieveProxyReport(dataSetId, proxyReportUrl, contentType, formatType, reportPath)
 
-              ok = status
+                ok = status
 
             elif contentType.startswith("report-entry-"):
                 cr = ContentRequestReportPdbx()
