@@ -84,8 +84,9 @@ class ContentRequestReportIo(object):
         try:
             with open(fp, "r") as infile:
                 return json.load(infile)
-        except:
+        except Exception as e:
             logger.info("Failed reading json resource file %s\n" % fp)
+            logger.exception(e)
 
         return {}
 
@@ -107,7 +108,8 @@ class ContentRequestReportIo(object):
             with open(fp, "w") as outfile:
                 json.dump(contentDefD, outfile, indent=4)
             return True
-        except:
+        except Exception as e:
             logger.exception("Failed writing json resource file %s\n" % fp)
+            logger.exception(e)
 
         return False
