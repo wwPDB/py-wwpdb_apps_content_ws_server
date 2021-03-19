@@ -132,8 +132,9 @@ class ContentRequestReportDb(MyConnectionBase):
                 #
                 rL = self.__processQuery(myResource, sList, sqlS)
                 rD[catName] = rL
-        except:
+        except Exception as e:
             logger.exception("Database extraction failing for content type %r" % requestContentType)
+            logger.exception(e)
         #
         return rD
 
@@ -163,14 +164,16 @@ class ContentRequestReportDb(MyConnectionBase):
                     try:
                         if isinstance(tt, (datetime.datetime, datetime.date)):
                             tt = tt.isoformat()
-                    except:
+                    except Exception as e:
                         logger.exception("Failing %r" % tt)
+                        logger.exception(e)
                     d[s] = tt
                 rL.append(d)
             #
             self.closeConnection()
-        except:
+        except Exception as e:
             logger.exception("Failing for resource %r and query %r" % (resourceName, sqlS))
+            logger.exception(e)
 
         endTime = time.time()
         logger.debug("Completed in (%.2f seconds)" % (endTime - startTime))
