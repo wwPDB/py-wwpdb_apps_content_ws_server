@@ -1,0 +1,30 @@
+
+stages:
+  - Build
+
+build_auto:
+  stage: Build
+  script:
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+  only:
+    refs:
+      - master
+    variables:
+      - $CI_PIPELINE_TRIGGERED == 'true'
+
+build_adhoc:
+  stage: Build
+  script:
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+  except:
+    refs:
+      - master
+      - develop
+  when: manual
+
+
+
