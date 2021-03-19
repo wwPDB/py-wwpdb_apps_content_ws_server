@@ -57,8 +57,9 @@ class Register(object):
                 outfile.write("%s" % jwtToken)
             logging.info("token written to %r " % tokenFileName)
             ok = True
-        except:
+        except Exception as e:
             logging.exception("Making token failed")
+            logging.exception(e)
             ok = False
         return ok
 
