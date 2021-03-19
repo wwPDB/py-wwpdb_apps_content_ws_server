@@ -41,8 +41,9 @@ class MessageConsumer(MessageConsumerBase):
         try:
             # logger.debug("Message body %r" % msgBody)
             pD = json.loads(msgBody)
-        except:
+        except Exception as e:
             logger.error("Message format error - discarding")
+            logger.exception(e)
             return False
         #
         successFlag = True
@@ -80,8 +81,9 @@ class MessageConsumerWorker(object):
                 self.__mc.run()
             except KeyboardInterrupt:
                 self.__mc.stop()
-        except:
+        except Exception as e:
             logger.exception("MessageConsumer failing")
+            logger.exception(e)
 
         endTime = time.time()
         logger.info("Completed (%.3f seconds)" % (endTime - startTime))
@@ -126,7 +128,8 @@ class MyDetachedProcess(DetachedProcessBase):
         logger.info("SUSPENDING detached process")
         try:
             self.__mcw.suspend()
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
 
 
@@ -153,12 +156,6 @@ def main():
 
     description = "Content request service handler"
     parser = ArgParser(description=description)
-    # py 2/3 issue  for optparse.OptionParser add an `add_argument` method for
-    # compatibility with argparse.ArgumentParser
-    try:
-        parser.add_argument = parser.add_option
-    except AttributeError:
-        pass
 
     parser.add_argument(
         "--start",
