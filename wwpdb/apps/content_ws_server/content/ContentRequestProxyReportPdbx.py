@@ -50,7 +50,7 @@ class ContentRequestProxyReportPdbx(object):
         return api_key
 
     def retrieveProxyReport(
-        self, dataSetId, apiUrl, contentType, formatType, reportPath
+            self, dataSetId, apiUrl, contentType, formatType, reportPath
     ):
         """Retrieve a report from a remote server"""
         logger.debug(
