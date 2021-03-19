@@ -25,29 +25,27 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import glob
+
 import datetime
-import time
-from subprocess import Popen, PIPE
 import json
 import logging
-import glob
-import signal
 import os
-
-from wwpdb.utils.config.ConfigInfoDataSet import ConfigInfoDataSet
-from wwpdb.utils.config.ConfigInfo import getSiteId
-
-from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
-from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
-from wwpdb.utils.ws_utils.ServiceSessionState import ServiceSessionState
-from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
-
-from wwpdb.utils.message_queue.MessagePublisher import MessagePublisher
-from wwpdb.io.locator.PathInfo import PathInfo
+import signal
+import time
+from subprocess import Popen, PIPE
 from wwpdb.io.file.DataExchange import DataExchange
+from wwpdb.io.locator.PathInfo import PathInfo
+from wwpdb.utils.config.ConfigInfo import getSiteId
+from wwpdb.utils.config.ConfigInfoDataSet import ConfigInfoDataSet
+from wwpdb.utils.message_queue.MessagePublisher import MessagePublisher
+from wwpdb.utils.ws_utils.ServiceSessionState import ServiceSessionState
+from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
+from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
+from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
 
 from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_routing_key, \
-    get_exchange_name, get_exchange_topic
+    get_exchange_name
 
 logger = logging.getLogger(__name__)
 
