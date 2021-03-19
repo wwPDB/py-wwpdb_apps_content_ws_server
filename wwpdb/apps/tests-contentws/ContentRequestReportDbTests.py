@@ -19,14 +19,13 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-
-import unittest
-import time
-import logging
-import json
-
-import os
 import platform
+
+import json
+import logging
+import os
+import time
+import unittest
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
@@ -39,6 +38,7 @@ rwMockTopPath = os.path.join(TESTOUTPUT)
 # Must create config file before importing ConfigInfo
 from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup
 from wwpdb.utils.testing.CreateRWTree import CreateRWTree
+
 # Copy site-config and selected items
 crw = CreateRWTree(mockTopPath, TESTOUTPUT)
 crw.createtree(['site-config', 'wsresources'])
