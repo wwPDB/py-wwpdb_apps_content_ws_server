@@ -76,7 +76,8 @@ class MyRequestApp(object):
             tok = request.headers.get('wwpdb-api-token')
             if tok and len(tok) > 20:
                 return True
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
 
         return False
