@@ -153,7 +153,7 @@ class ContentRequestReportDb(MyConnectionBase):
             myQ = MyDbQuery(dbcon=self._dbCon, verbose=self.__verbose, log=self.__lfh)
             rowList = myQ.selectRows(queryString=sqlS)
             #
-            if (self.__verbose):
+            if self.__verbose:
                 logger.debug("Result length %d\n" % len(rowList))
                 # logger.debug("Row list %r" % rowList)
                 #
