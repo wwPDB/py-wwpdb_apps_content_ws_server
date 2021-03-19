@@ -66,8 +66,9 @@ class MyRequestApp(object):
             outL.append("Parameter List:")
             for name, value in request.params.items():
                 outL.append("  ++  Request parameter:    %s:  %r\n" % (name, value))
-        except:
+        except Exception as e:
             logger.exception("FAILING for service %s" % self.__serviceName)
+            logger.exception(e)
         return outL
 
     def __isHeaderApiToken(self, request):
@@ -102,8 +103,9 @@ class MyRequestApp(object):
             #
 
             return tD
-        except:
-            logging.exception("Failed site %r auth header %r" % (siteId, authHeader))
+        except Exception as e:
+            logger.exception("Failed site %r auth header %r" % (siteId, authHeader))
+            logger.exception(e)
             return tD
 
     def __call__(self, environment, responseApplication):
@@ -135,8 +137,9 @@ class MyRequestApp(object):
                 myParameterDict[name].append(value)
             myParameterDict['request_path'] = [myRequest.path.lower()]
 
-        except:
-            logging.exception("Exception processing %s request parameters" % self.__serviceName)
+        except Exception as e:
+            logger.exception("Exception processing %s request parameters" % self.__serviceName)
+            logger.exception(e)
 
         ###
         # At this point we have everything needed from the request !
@@ -182,8 +185,9 @@ class MyRequestApp(object):
                             rOk = True
                     else:
                         rOk = True
-                except:
-                    logging.exception("Content request auth failure")
+                except Exception as e:
+                    logger.exception("Content request auth failure")
+                    logger.exception(e)
                     rOk = False
 
                 ok = rOk
@@ -205,8 +209,9 @@ class MyRequestApp(object):
                 sR = ServiceResponse(returnFormat='json')
                 sR.setError(statusCode=authD['errorCode'], msg=authD['errorMessage'])
                 myResponse = sR.getResponse()
-        except:
+        except Exception as e:
             logger.exception("Service request processing exception")
+            logger.exception(e)
         #
         #
         #
@@ -218,4 +223,3 @@ class MyRequestApp(object):
 ##
 ##
 application = MyRequestApp(serviceName="ContentServiceApp", authVerifyFlag=USEKEY)
-
