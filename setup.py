@@ -4,7 +4,6 @@
 # Update:
 #
 import re
-import glob
 
 from setuptools import find_packages
 from setuptools import setup
@@ -19,7 +18,6 @@ with open("wwpdb/apps/content_ws_server/__init__.py", "r") as fd:
 
 if not version:
     raise RuntimeError("Cannot find version information")
-
 
 setup(
     name=thisPackage,
