@@ -15,12 +15,13 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import logging
 import sys
 import time
-import logging
-
 from mmcif.io.IoAdapterCore import IoAdapterCore
+
 from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
+
 #
 logger = logging.getLogger()
 
@@ -140,6 +141,7 @@ class ContentRequestReportPdbx(object):
                                     od[k] = v
                             rD[catName].append(od)
         except:
-            logger.exception("Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
+            logger.exception(
+                "Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
         #
         return rD
