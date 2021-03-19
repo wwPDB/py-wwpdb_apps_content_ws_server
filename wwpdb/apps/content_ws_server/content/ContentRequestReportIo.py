@@ -15,8 +15,9 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import logging
 import datetime
+import logging
+
 from wwpdb.apps.content_ws_server.content_definitions.ContentDefintions import get_content_definition_file_path
 
 try:
