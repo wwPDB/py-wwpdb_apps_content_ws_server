@@ -15,19 +15,20 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import sys
-import time
 import datetime
 import logging
-
-from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
-from wwpdb.utils.db.MyDbSqlGen import MyDbQuerySqlGen, MyDbConditionSqlGen
-from wwpdb.utils.db.MyDbUtil import MyDbQuery
-from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
+import sys
+import time
 #
 #  -- supporting queries against only DA_INTERNAL in this service --
 from wwpdb.utils.db.DaInternalSchemaDef import DaInternalSchemaDef
+from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
+from wwpdb.utils.db.MyDbSqlGen import MyDbQuerySqlGen, MyDbConditionSqlGen
+from wwpdb.utils.db.MyDbUtil import MyDbQuery
 from wwpdb.utils.db.WorkflowSchemaDef import WorkflowSchemaDef
+
+from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
+
 #
 logger = logging.getLogger()
 
