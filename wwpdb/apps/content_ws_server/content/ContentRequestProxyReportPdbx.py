@@ -45,7 +45,8 @@ class ContentRequestProxyReportPdbx(object):
         try:
             with open(filePath, "r") as fp:
                 api_key = fp.read()
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
         return api_key
 
