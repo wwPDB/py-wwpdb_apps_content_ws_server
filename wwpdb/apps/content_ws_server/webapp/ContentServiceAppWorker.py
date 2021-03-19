@@ -216,8 +216,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                         self._trackServiceStatus("uploading", file=fileName)
                     else:
                         sst.setServiceError(msg="File upload failed")
-        except:
+        except Exception as e:
             logger.exception("FAILING")
+            logger.exception(e)
             sst = ServiceSessionState()
             sst.setServiceError(msg="File upload failed")
 
@@ -233,7 +234,8 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 fp = os.path.join(self._sessionPath, fName)
                 if os.access(fp, os.R_OK):
                     return fp
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
         return None
 
@@ -279,8 +281,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     contentType="model", formatType="pdbx", version="latest"
                 )
 
-        except:
+        except Exception as e:
             logger.exception("Fetch model failing %r" % entryId)
+            logger.exception(e)
         return pdbxFilePath
 
     def __depuiGenerateModelFile(self, siteId, entryId):
@@ -456,8 +459,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     self._trackServiceStatus("submitted")
                     ok = self.__publishRequest(pD)
                     logger.debug("Publish method return status %r" % ok)
-                except:
+                except Exception as e:
                     logger.exception("Failed publish method")
+                    logger.exception(e)
                     ok = False
 
                 if not ok:
@@ -497,8 +501,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 queueName=get_queue_name(site_id=siteID),
                 routingKey=get_routing_key(),
             )
-        except:
+        except Exception as e:
             logger.exception("Failing publish request")
+            logger.exception(e)
         return ok
 
     ##
@@ -531,7 +536,8 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
                 sst.setServiceStatusText("Index length %d" % len(rD))
-            except:
+            except Exception as e:
+                logger.exception(e)
                 dD["index"] = rD
                 sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
@@ -569,8 +575,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 sst.setDownload(fn, fp, contentType=None, md5Digest=md5Digest)
                 # self._trackServiceStatus('downloading', {'file': fn})
                 self._trackServiceStatus("downloading", file=fn)
-        except:
+        except Exception as e:
             logger.exception("FAILING")
+            logger.exception(e)
             sst.setServiceCompletionFlag(False)
             sst.setServiceError(msg="File download failed")
 
@@ -610,7 +617,8 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     sst.setServiceStatusText(
                         "Activity history length %d" % len(dD["activity_summary"])
                     )
-                except:
+                except Exception as e:
+                    logger.exception(e)
                     dD["activity_summary"] = {}
                     sst.setAppDataDict(dD, format="json")
                     sst.setServiceCompletionFlag(True)
@@ -634,7 +642,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 close_fds=True,
                 preexec_fn=os.setsid,
             )
-            while process.poll() == None:
+            while process.poll() is None:
                 time.sleep(0.1)
                 now = datetime.datetime.now()
                 if (now - start).seconds > timeout:
@@ -653,8 +661,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     return None
                 #
                 #
-        except:
+        except Exception as e:
             logger.error("Exception", exc_info=True)
+            logger.error(e)
         #
         output = process.communicate()
         logger.debug("completed with stdout data %r" % output[0])
