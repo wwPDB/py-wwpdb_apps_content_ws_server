@@ -41,7 +41,6 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     entry_points={
-        #        'console_scripts': ['ValidationServiceHandler=wwpdb.apps.val_ws_server.service.ValidationServiceHandler:main']
     },
     #
     python_requires='>=3.4',
