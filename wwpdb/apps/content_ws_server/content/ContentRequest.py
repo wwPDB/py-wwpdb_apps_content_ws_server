@@ -77,8 +77,9 @@ class ContentRequest(object):
             if self.__debugPayload:
                 logger.debug("Parameter dictionary copy %r" % self.__pD)
             return True
-        except:
+        except Exception as e:
             logger.exception("Failing")
+            logger.exception(e)
 
         return False
 
@@ -90,12 +91,13 @@ class ContentRequest(object):
         testMode = self.__pD.get('worker_test_mode', False)
         successFlag = False
         #
-        if (testMode):
+        if testMode:
             try:
                 wSecs = int(self.__pD.get('worker_test_duration', 10))
                 logger.info("Running in test mode with duration %d seconds" % wSecs)
                 time.sleep(wSecs)
-            except:
+            except Exception as e:
+                logger.exception(e)
                 pass
             try:
                 ct = self.__pD['request_content_type']
@@ -105,8 +107,9 @@ class ContentRequest(object):
                     ofh.write("DUMMY")
                 iD[ct] = (fn, 'data')
                 successFlag = True
-            except:
+            except Exception as e:
                 logger.exception("Mock execution file update failing")
+                logger.exception(e)
             #
             logger.info("Test mode service completed")
         else:
@@ -143,8 +146,9 @@ class ContentRequest(object):
             sH.add(sessionId=self.__pD['session_id'], statusOp=iD['status'])
             logger.info("Updated service history store with %r" % iD['status'])
             #
-        except:
-            logger.exception("Faled to update session tracking history status %r" % iD)
+        except Exception as e:
+            logger.exception("Failed to update session tracking history status %r" % iD)
+            logger.exception(e)
 
         try:
             #  Update session store -
@@ -153,8 +157,9 @@ class ContentRequest(object):
             #
             tStatus = self.__sds.get('status')
             logger.info("Read session store status as  %r" % tStatus)
-        except:
+        except Exception as e:
             logger.exception("Failed to update session status %r" % iD)
+            logger.exception(e)
         #
         logger.info("Updated session store with: %r" % iD)
         return True
@@ -230,8 +235,9 @@ class ContentRequest(object):
             logger.info(" - Return status: %r" % ok)
 
             return ok
-        except:
-            logging.exception("Failing content request runner method ")
+        except Exception as e:
+            logger.exception("Failing content request runner method ")
+            logger.exception(e)
 
         return False
         #
