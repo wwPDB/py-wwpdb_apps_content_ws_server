@@ -52,8 +52,9 @@ class MessageConsumer(MessageConsumerBase):
             v = ContentRequest()
             v.setup(pD)
             v.run()
-        except:
+        except Exception as e:
             logger.exception("Failed service execution with message %r" % pD)
+            logger.exception(e)
 
         return successFlag
 
@@ -186,7 +187,6 @@ def main():
         help="Report consumer client process status",
     )
 
-    # parser.add_argument("-v", "--verbose", default=False, action="store_true", dest="verbose", help="Enable verbose output")
     parser.add_argument(
         "--debug",
         default=1,
