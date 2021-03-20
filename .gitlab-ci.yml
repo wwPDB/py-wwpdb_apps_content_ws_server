@@ -1,15 +1,19 @@
 image: docker
 
 stages:
-  - Build
+  - build
 
 services:
   - docker:dind
 
+before_script:
+  - docker info
+  - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+
+
 build_auto_server:
-  stage: Build
+  stage: build
   script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
     - docker push ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   only:
@@ -19,9 +23,8 @@ build_auto_server:
       - $CI_PIPELINE_TRIGGERED == 'true'
 
 build_adhoc_server:
-  stage: Build
+  stage: build
   script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
     - docker push ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   except:
@@ -31,9 +34,8 @@ build_adhoc_server:
   when: manual
 
 build_auto_consumer:
-  stage: Build
+  stage: build
   script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.consumer .
     - docker push ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   only:
@@ -43,9 +45,8 @@ build_auto_consumer:
       - $CI_PIPELINE_TRIGGERED == 'true'
 
 build_adhoc_consumer:
-  stage: Build
+  stage: build
   script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker build -t ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.consumer .
     - docker push ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   except:
