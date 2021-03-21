@@ -1,10 +1,10 @@
-image: docker
+image: docker:18-git
 
 stages:
   - build
 
 services:
-  - docker:dind
+  - docker:18-dind
 
 before_script:
   - docker info
