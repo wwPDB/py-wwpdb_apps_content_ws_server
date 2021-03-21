@@ -14,8 +14,8 @@ before_script:
 build_auto_server:
   stage: build
   script:
-    - docker build -t ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
-    - docker push ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   only:
     refs:
       - master
@@ -25,35 +25,12 @@ build_auto_server:
 build_adhoc_server:
   stage: build
   script:
-    - docker build -t ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
-    - docker push ${CI_REGISTRY_IMAGE}_server:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
   except:
     refs:
       - master
       - develop
   when: manual
-
-build_auto_consumer:
-  stage: build
-  script:
-    - docker build -t ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.consumer .
-    - docker push ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
-  only:
-    refs:
-      - master
-    variables:
-      - $CI_PIPELINE_TRIGGERED == 'true'
-
-build_adhoc_consumer:
-  stage: build
-  script:
-    - docker build -t ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.consumer .
-    - docker push ${CI_REGISTRY_IMAGE}_consumer:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
-  except:
-    refs:
-      - master
-      - develop
-  when: manual
-
 
 
