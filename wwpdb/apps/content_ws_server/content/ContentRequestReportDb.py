@@ -15,19 +15,20 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import sys
-import time
 import datetime
 import logging
-
-from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
-from wwpdb.utils.db.MyDbSqlGen import MyDbQuerySqlGen, MyDbConditionSqlGen
-from wwpdb.utils.db.MyDbUtil import MyDbQuery
-from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
+import sys
+import time
 #
 #  -- supporting queries against only DA_INTERNAL in this service --
 from wwpdb.utils.db.DaInternalSchemaDef import DaInternalSchemaDef
+from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
+from wwpdb.utils.db.MyDbSqlGen import MyDbQuerySqlGen, MyDbConditionSqlGen
+from wwpdb.utils.db.MyDbUtil import MyDbQuery
 from wwpdb.utils.db.WorkflowSchemaDef import WorkflowSchemaDef
+
+from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
+
 #
 logger = logging.getLogger()
 
@@ -131,8 +132,9 @@ class ContentRequestReportDb(MyConnectionBase):
                 #
                 rL = self.__processQuery(myResource, sList, sqlS)
                 rD[catName] = rL
-        except:
+        except Exception as e:
             logger.exception("Database extraction failing for content type %r" % requestContentType)
+            logger.exception(e)
         #
         return rD
 
@@ -151,7 +153,7 @@ class ContentRequestReportDb(MyConnectionBase):
             myQ = MyDbQuery(dbcon=self._dbCon, verbose=self.__verbose, log=self.__lfh)
             rowList = myQ.selectRows(queryString=sqlS)
             #
-            if (self.__verbose):
+            if self.__verbose:
                 logger.debug("Result length %d\n" % len(rowList))
                 # logger.debug("Row list %r" % rowList)
                 #
@@ -162,14 +164,16 @@ class ContentRequestReportDb(MyConnectionBase):
                     try:
                         if isinstance(tt, (datetime.datetime, datetime.date)):
                             tt = tt.isoformat()
-                    except:
+                    except Exception as e:
                         logger.exception("Failing %r" % tt)
+                        logger.exception(e)
                     d[s] = tt
                 rL.append(d)
             #
             self.closeConnection()
-        except:
+        except Exception as e:
             logger.exception("Failing for resource %r and query %r" % (resourceName, sqlS))
+            logger.exception(e)
 
         endTime = time.time()
         logger.debug("Completed in (%.2f seconds)" % (endTime - startTime))

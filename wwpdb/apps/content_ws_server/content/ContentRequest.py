@@ -16,21 +16,24 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import copy
 import os.path
+
+import json
+import logging
 import os
 import time
-import logging
-import copy
-import json
 #
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.ws_utils.ServiceDataStore import ServiceDataStore
 from wwpdb.utils.ws_utils.ServiceHistory import ServiceHistory
-#
-from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+
+from wwpdb.apps.content_ws_server.content.ContentRequestPolicyFilter import ContentRequestPolicyFilter
 from wwpdb.apps.content_ws_server.content.ContentRequestProxyReportPdbx import ContentRequestProxyReportPdbx
 from wwpdb.apps.content_ws_server.content.ContentRequestReportDb import ContentRequestReportDb
-from wwpdb.apps.content_ws_server.content.ContentRequestPolicyFilter import ContentRequestPolicyFilter
+#
+from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+
 #
 logger = logging.getLogger()
 
@@ -68,14 +71,15 @@ class ContentRequest(object):
             # self.__sD = self.__sds.getDictionary()
             # logger.info("Session dictionary %r" % self.__sD)
             #
-            #logger.info("Preparing copy of dictionary")
+            # logger.info("Preparing copy of dictionary")
             self.__pD = copy.deepcopy(pD)
             #
             if self.__debugPayload:
                 logger.debug("Parameter dictionary copy %r" % self.__pD)
             return True
-        except:
+        except Exception as e:
             logger.exception("Failing")
+            logger.exception(e)
 
         return False
 
@@ -87,12 +91,13 @@ class ContentRequest(object):
         testMode = self.__pD.get('worker_test_mode', False)
         successFlag = False
         #
-        if (testMode):
+        if testMode:
             try:
                 wSecs = int(self.__pD.get('worker_test_duration', 10))
                 logger.info("Running in test mode with duration %d seconds" % wSecs)
                 time.sleep(wSecs)
-            except:
+            except Exception as e:
+                logger.exception(e)
                 pass
             try:
                 ct = self.__pD['request_content_type']
@@ -102,8 +107,9 @@ class ContentRequest(object):
                     ofh.write("DUMMY")
                 iD[ct] = (fn, 'data')
                 successFlag = True
-            except:
+            except Exception as e:
                 logger.exception("Mock execution file update failing")
+                logger.exception(e)
             #
             logger.info("Test mode service completed")
         else:
@@ -140,8 +146,9 @@ class ContentRequest(object):
             sH.add(sessionId=self.__pD['session_id'], statusOp=iD['status'])
             logger.info("Updated service history store with %r" % iD['status'])
             #
-        except:
-            logger.exception("Faled to update session tracking history status %r" % iD)
+        except Exception as e:
+            logger.exception("Failed to update session tracking history status %r" % iD)
+            logger.exception(e)
 
         try:
             #  Update session store -
@@ -150,8 +157,9 @@ class ContentRequest(object):
             #
             tStatus = self.__sds.get('status')
             logger.info("Read session store status as  %r" % tStatus)
-        except:
+        except Exception as e:
             logger.exception("Failed to update session status %r" % iD)
+            logger.exception(e)
         #
         logger.info("Updated session store with: %r" % iD)
         return True
@@ -174,15 +182,15 @@ class ContentRequest(object):
             proxyReportUrl = pD.get('session_proxy_url')
 
             if proxyReportUrl and contentType.startswith("report-entry-"):
-              logger.debug("Forwarding request to another server for an entry")
-              logger.debug("pD is %r" % pD)
-              formatType = pD.get('request_format_type')
+                logger.debug("Forwarding request to another server for an entry")
+                logger.debug("pD is %r" % pD)
+                formatType = pD.get('request_format_type')
 
-              cr = ContentRequestProxyReportPdbx()
-              # Need to test for rejection - id not found and forward back errors
-              status = cr.retrieveProxyReport(dataSetId, proxyReportUrl, contentType, formatType, reportPath)
+                cr = ContentRequestProxyReportPdbx()
+                # Need to test for rejection - id not found and forward back errors
+                status = cr.retrieveProxyReport(dataSetId, proxyReportUrl, contentType, formatType, reportPath)
 
-              ok = status
+                ok = status
 
             elif contentType.startswith("report-entry-"):
                 cr = ContentRequestReportPdbx()
@@ -227,8 +235,9 @@ class ContentRequest(object):
             logger.info(" - Return status: %r" % ok)
 
             return ok
-        except:
-            logging.exception("Failing content request runner method ")
+        except Exception as e:
+            logger.exception("Failing content request runner method ")
+            logger.exception(e)
 
         return False
         #

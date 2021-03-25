@@ -15,7 +15,6 @@ __version__ = "V0.07"
 
 import argparse
 import logging
-import sys
 
 from wwpdb.utils.ws_utils.TokenUtils import JwtTokenUtils
 
@@ -37,11 +36,11 @@ class Register(object):
         #
 
     def makeAccessToken(
-        self,
-        emailAddress,
-        tokenPrefix="CONTENTWS",
-        expireDays=30,
-        tokenFileName="onedep_biocuration_apikey.jwt",
+            self,
+            emailAddress,
+            tokenPrefix="CONTENTWS",
+            expireDays=30,
+            tokenFileName="onedep_biocuration_apikey.jwt",
     ):
         """Test acquire new or existing token and write to disk
         """
@@ -58,8 +57,9 @@ class Register(object):
                 outfile.write("%s" % jwtToken)
             logging.info("token written to %r " % tokenFileName)
             ok = True
-        except:
+        except Exception as e:
             logging.exception("Making token failed")
+            logging.exception(e)
             ok = False
         return ok
 

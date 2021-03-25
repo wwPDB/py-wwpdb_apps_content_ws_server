@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # server
+  onedep_api_server:
+    image: onedep_api_server
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    environment:
+      WWPDB_SITE_ID: ${WWPDB_SITE_ID}
+      WWPDB_SITE_LOC: ${WWPDB_SITE_LOC}
+      TOP_WWPDB_SITE_CONFIG_DIR: ${TOP_WWPDB_SITE_CONFIG_DIR}
+    ports:
+      - target: 8000
+        published: 8000
+    volumes:
+      - onedep_data:/wwpdb/onedep/data
+      - onedep_sessions:/wwpdb/onedep/sessions
+      - onedep_resources_ro:/wwpdb/onedep/resources_ro
+      - type: bind
+        source: ./env/site-config
+        target: ${TOP_WWPDB_SITE_CONFIG_DIR}
+
+  # server
+  onedep_api_consumer:
+    image: onedep_api_consumer
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer
+    environment:
+      WWPDB_SITE_ID: ${WWPDB_SITE_ID}
+      WWPDB_SITE_LOC: ${WWPDB_SITE_LOC}
+      TOP_WWPDB_SITE_CONFIG_DIR: ${TOP_WWPDB_SITE_CONFIG_DIR}
+    volumes:
+      - onedep_data:/wwpdb/onedep/data
+      - onedep_sessions:/wwpdb/onedep/sessions
+      - onedep_resources_ro:/wwpdb/onedep/resources_ro
+      - type: bind
+        source: ./env/site-config
+        target: ${TOP_WWPDB_SITE_CONFIG_DIR}
+
+volumes:
+  onedep_data:
+  onedep_sessions:
+  onedep_reference:
+  onedep_webapps:
+  onedep_resources_ro:

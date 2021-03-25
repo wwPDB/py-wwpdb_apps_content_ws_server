@@ -9,24 +9,18 @@
 #
 ##
 
+import platform
+
 import json
 import logging
 import os
-import platform
 import sys
 import time
-
-try:
-    from argparse import ArgumentParser as ArgParser
-except ImportError:
-    from optparse import OptionParser as ArgParser
-
-# from optparse import OptionParser
-
+from argparse import ArgumentParser as ArgParser
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.detach.DetachedProcessBase import DetachedProcessBase
 from wwpdb.utils.message_queue.MessageConsumerBase import MessageConsumerBase
 from wwpdb.utils.message_queue.MessageQueueConnection import MessageQueueConnection
-from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 
 from wwpdb.apps.content_ws_server.content.ContentRequest import ContentRequest
 from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_exchange_name, \
@@ -47,8 +41,9 @@ class MessageConsumer(MessageConsumerBase):
         try:
             # logger.debug("Message body %r" % msgBody)
             pD = json.loads(msgBody)
-        except:
+        except Exception as e:
             logger.error("Message format error - discarding")
+            logger.exception(e)
             return False
         #
         successFlag = True
@@ -57,8 +52,9 @@ class MessageConsumer(MessageConsumerBase):
             v = ContentRequest()
             v.setup(pD)
             v.run()
-        except:
+        except Exception as e:
             logger.exception("Failed service execution with message %r" % pD)
+            logger.exception(e)
 
         return successFlag
 
@@ -86,8 +82,9 @@ class MessageConsumerWorker(object):
                 self.__mc.run()
             except KeyboardInterrupt:
                 self.__mc.stop()
-        except:
+        except Exception as e:
             logger.exception("MessageConsumer failing")
+            logger.exception(e)
 
         endTime = time.time()
         logger.info("Completed (%.3f seconds)" % (endTime - startTime))
@@ -104,14 +101,14 @@ class MyDetachedProcess(DetachedProcessBase):
     """
 
     def __init__(
-        self,
-        pidFile="/tmp/DetachedProcessBase.pid",
-        stdin=os.devnull,
-        stdout=os.devnull,
-        stderr=os.devnull,
-        wrkDir="/",
-        gid=None,
-        uid=None,
+            self,
+            pidFile="/tmp/DetachedProcessBase.pid",
+            stdin=os.devnull,
+            stdout=os.devnull,
+            stderr=os.devnull,
+            wrkDir="/",
+            gid=None,
+            uid=None,
     ):
         super(MyDetachedProcess, self).__init__(
             pidFile=pidFile,
@@ -132,7 +129,8 @@ class MyDetachedProcess(DetachedProcessBase):
         logger.info("SUSPENDING detached process")
         try:
             self.__mcw.suspend()
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
 
 
@@ -159,12 +157,6 @@ def main():
 
     description = "Content request service handler"
     parser = ArgParser(description=description)
-    # py 2/3 issue  for optparse.OptionParser add an `add_argument` method for
-    # compatibility with argparse.ArgumentParser
-    try:
-        parser.add_argument = parser.add_option
-    except AttributeError:
-        pass
 
     parser.add_argument(
         "--start",
@@ -195,7 +187,6 @@ def main():
         help="Report consumer client process status",
     )
 
-    # parser.add_argument("-v", "--verbose", default=False, action="store_true", dest="verbose", help="Enable verbose output")
     parser.add_argument(
         "--debug",
         default=1,

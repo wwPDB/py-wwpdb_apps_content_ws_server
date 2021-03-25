@@ -15,8 +15,9 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-import logging
 import datetime
+import logging
+
 from wwpdb.apps.content_ws_server.content_definitions.ContentDefintions import get_content_definition_file_path
 
 try:
@@ -83,8 +84,9 @@ class ContentRequestReportIo(object):
         try:
             with open(fp, "r") as infile:
                 return json.load(infile)
-        except:
+        except Exception as e:
             logger.info("Failed reading json resource file %s\n" % fp)
+            logger.exception(e)
 
         return {}
 
@@ -106,7 +108,8 @@ class ContentRequestReportIo(object):
             with open(fp, "w") as outfile:
                 json.dump(contentDefD, outfile, indent=4)
             return True
-        except:
+        except Exception as e:
             logger.exception("Failed writing json resource file %s\n" % fp)
+            logger.exception(e)
 
         return False

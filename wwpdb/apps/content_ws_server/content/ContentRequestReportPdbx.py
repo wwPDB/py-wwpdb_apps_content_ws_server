@@ -15,12 +15,13 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import logging
 import sys
 import time
-import logging
-
 from mmcif.io.IoAdapterCore import IoAdapterCore
+
 from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
+
 #
 logger = logging.getLogger()
 
@@ -63,8 +64,9 @@ class ContentRequestReportPdbx(object):
             #
             logger.info("Read %d data blocks from %r" % (len(containerList), filePath))
 
-        except:
+        except Exception as e:
             logger.exception("Read failing for %r" % filePath)
+            logger.exception(e)
 
         endTime = time.time()
         logger.info("Completed in (%.2f seconds)\n" % (endTime - startTime))
@@ -80,7 +82,7 @@ class ContentRequestReportPdbx(object):
         elif myType in ['float', 'double']:
             vv = float(str(v))
         else:
-            vv = str(vv)
+            vv = str(v)
         #
         if type in ['string', 'char', 'float', 'double', 'int']:
             if myOp in ['eq']:
@@ -139,7 +141,9 @@ class ContentRequestReportPdbx(object):
                                 if k in catSel:
                                     od[k] = v
                             rD[catName].append(od)
-        except:
-            logger.exception("Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
+        except Exception as e:
+            logger.exception(
+                "Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
+            logger.exception(e)
         #
         return rD

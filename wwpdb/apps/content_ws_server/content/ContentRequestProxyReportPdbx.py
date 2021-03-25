@@ -45,12 +45,13 @@ class ContentRequestProxyReportPdbx(object):
         try:
             with open(filePath, "r") as fp:
                 api_key = fp.read()
-        except:
+        except Exception as e:
+            logger.exception(e)
             pass
         return api_key
 
     def retrieveProxyReport(
-        self, dataSetId, apiUrl, contentType, formatType, reportPath
+            self, dataSetId, apiUrl, contentType, formatType, reportPath
     ):
         """Retrieve a report from a remote server"""
         logger.debug(
