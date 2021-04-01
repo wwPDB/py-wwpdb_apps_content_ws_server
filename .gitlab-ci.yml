@@ -5,6 +5,10 @@ stages:
 
 services:
   - docker:18-dind
+  
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
 
 before_script:
   - docker info
@@ -14,21 +18,31 @@ before_script:
 build_auto_server:
   stage: build
   script:
-    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+    - docker build -t ${CONTAINER_RELEASE_IMAGE} -f Dockerfile.server .
+    - docker push ${CONTAINER_RELEASE_IMAGE}
   only:
     refs:
       - master
 
-build_adhoc_server:
+build_adhoc_server_master:
   stage: build
   script:
-    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -f Dockerfile.server .
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
-  except:
+    - docker build -t ${CONTAINER_RELEASE_IMAGE} -f Dockerfile.server .
+    - docker push ${CONTAINER_RELEASE_IMAGE}
+  only:
     refs:
       - master
-      - develop
+  when: manual
+
+
+build_adhoc_server_non_master:
+  stage: build
+  script:
+    - docker build -t ${IMAGE_TAG} -f Dockerfile.server .
+    - docker push ${IMAGE_TAG}
+  excepts:
+    refs:
+      - master
   when: manual
 
 
