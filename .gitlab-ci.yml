@@ -40,7 +40,7 @@ build_adhoc_server_non_master:
   script:
     - docker build -t ${IMAGE_TAG} -f Dockerfile.server .
     - docker push ${IMAGE_TAG}
-  excepts:
+  except:
     refs:
       - master
   when: manual
