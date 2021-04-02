@@ -7,8 +7,10 @@ services:
   - docker:18-dind
   
 variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  SERVER_IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  SERVER_RELEASE_TAG: $CI_REGISTRY_IMAGE:latest
+  CONSUMER_IMAGE_TAG: $CI_REGISTRY_IMAGE/consumer:$CI_COMMIT_REF_SLUG
+  CONSUMER_RELEASE_TAG: $CI_REGISTRY_IMAGE/consumer:latest
 
 before_script:
   - docker info
@@ -18,8 +20,17 @@ before_script:
 build_auto_server:
   stage: build
   script:
-    - docker build -t ${CONTAINER_RELEASE_IMAGE} -f Dockerfile.server .
-    - docker push ${CONTAINER_RELEASE_IMAGE}
+    - docker build -t ${SERVER_RELEASE_TAG} -f Dockerfile.server .
+    - docker push ${SERVER_RELEASE_TAG}
+  only:
+    refs:
+      - master
+
+build_auto_consumer:
+  stage: build
+  script:
+    - docker build -t ${CONSUMER_RELEASE_TAG} -f Dockerfile.consumer .
+    - docker push ${CONSUMER_RELEASE_TAG}
   only:
     refs:
       - master
@@ -27,8 +38,17 @@ build_auto_server:
 build_auto_develop_server:
   stage: build
   script:
-    - docker build -t ${IMAGE_TAG} -f Dockerfile.server .
-    - docker push ${IMAGE_TAG}
+    - docker build -t ${SERVER_IMAGE_TAG} -f Dockerfile.server .
+    - docker push ${SERVER_IMAGE_TAG}
+  only:
+    refs:
+      - develop
+
+build_auto_develop_consumer:
+  stage: build
+  script:
+    - docker build -t ${CONSUMER_IMAGE_TAG} -f Dockerfile.consumer .
+    - docker push ${CONSUMER_IMAGE_TAG}
   only:
     refs:
       - develop
@@ -37,8 +57,8 @@ build_auto_develop_server:
 build_adhoc_server_master:
   stage: build
   script:
-    - docker build -t ${CONTAINER_RELEASE_IMAGE} -f Dockerfile.server .
-    - docker push ${CONTAINER_RELEASE_IMAGE}
+    - docker build -t ${SERVER_RELEASE_TAG} -f Dockerfile.server .
+    - docker push ${SERVER_RELEASE_TAG}
   only:
     refs:
       - master
@@ -48,8 +68,29 @@ build_adhoc_server_master:
 build_adhoc_server_non_master:
   stage: build
   script:
-    - docker build -t ${IMAGE_TAG} -f Dockerfile.server .
-    - docker push ${IMAGE_TAG}
+    - docker build -t ${SERVER_IMAGE_TAG} -f Dockerfile.server .
+    - docker push ${SERVER_IMAGE_TAG}
+  except:
+    refs:
+      - master
+  when: manual
+
+build_adhoc_consumer_master:
+  stage: build
+  script:
+    - docker build -t ${CONSUMER_RELEASE_TAG} -f Dockerfile.consumer .
+    - docker push ${CONSUMER_RELEASE_TAG}
+  only:
+    refs:
+      - master
+  when: manual
+
+
+build_adhoc_consumer_non_master:
+  stage: build
+  script:
+    - docker build -t ${CONSUMER_IMAGE_TAG} -f Dockerfile.consumer .
+    - docker push ${CONSUMER_IMAGE_TAG}
   except:
     refs:
       - master
