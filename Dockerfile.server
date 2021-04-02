@@ -44,7 +44,7 @@ EXPOSE 25 80 465 587 443 5672 5673
 
 ENV RUN_SCRIPT=${SITE_CONFIG_PATH}/run_server.sh
 RUN echo "${SITE_CONFIG}" >> ${RUN_SCRIPT} \
-    && echo "gunicorn wwpdb.apps.content_ws_server.webapp.wsgi --bind 0.0.0.0:8000 --timeout 0 --threads 4" >> ${RUN_SCRIPT} \
+    && echo "gunicorn wwpdb.apps.content_ws_server.webapp.wsgi --bind 0.0.0.0:8080 --timeout 0 --threads 4" >> ${RUN_SCRIPT} \
     && chmod a+x ${RUN_SCRIPT}
 
 CMD ${RUN_SCRIPT}
