@@ -24,6 +24,16 @@ build_auto_server:
     refs:
       - master
 
+build_auto_develop_server:
+  stage: build
+  script:
+    - docker build -t ${IMAGE_TAG} -f Dockerfile.server .
+    - docker push ${IMAGE_TAG}
+  only:
+    refs:
+      - develop
+
+
 build_adhoc_server_master:
   stage: build
   script:
