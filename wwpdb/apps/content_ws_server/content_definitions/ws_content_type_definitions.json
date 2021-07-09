@@ -475,55 +475,47 @@
         }, 
         "conditions": {}, 
         "type": "rdbms"
-    }, 
+    },
     "report-summary-emdb-status": {
         "content": {
-            "rcsb_status": [
-                "structure_id", 
-                "exp_method", 
-                "process_site", 
-                "rcsb_annotator", 
-                "title", 
-                "initial_deposition_date"
-            ], 
+            "em_admin": [
+                "Structure_id",
+                "entry_id",
+                "current_status",
+                "deposition_date",
+                "deposition_site",
+                "last_update",
+                "map_release_date",
+                "obsoleted_date",
+                "replace_existing_entry_flag",
+                "title",
+                "author_list"
+            ],
             "database_2": [
-                "structure_id", 
-                "database_id", 
+                "Structure_ID",
+                "database_id",
                 "database_code"
-            ], 
-            "em_admin": [
-                "structure_id", 
-                "current_status", 
-                "deposition_date", 
-                "deposition_site", 
-                "last_update", 
-                "map_release_date", 
-                "header_release_date"
             ]
-        }, 
+        },
         "resource": {
-            "rcsb_status": [
-                "da_internal", 
-                "da_internal"
-            ], 
-            "database_2": [
-                "da_internal", 
-                "da_internal"
-            ], 
             "em_admin": [
-                "da_internal", 
+                "da_internal",
+                "da_internal"
+            ],
+            "database_2": [
+                "da_internal",
                 "da_internal"
             ]
-        }, 
+        },
         "conditions": {
-            "rcsb_status": {
-                "exp_method": [
-                    "ELECTRON MICROSCOPY", 
-                    "char", 
+            "database_2": {
+                "database_id": [
+                    "EMDB",
+                    "char",
                     "LIKE"
                 ]
             }
-        }, 
+        },
         "type": "rdbms"
     }
 }
