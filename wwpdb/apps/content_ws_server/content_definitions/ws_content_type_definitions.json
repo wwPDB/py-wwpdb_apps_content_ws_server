@@ -478,6 +478,10 @@
     },
     "report-summary-emdb-status": {
         "content": {
+            "rcsb_status": [
+                "Structure_ID",
+                "suppressed_title_Y_N"
+            ],
             "em_admin": [
                 "Structure_id",
                 "entry_id",
@@ -498,6 +502,10 @@
             ]
         },
         "resource": {
+            "rcsb_status": [
+                "da_internal",
+                "da_internal"
+            ],
             "em_admin": [
                 "da_internal",
                 "da_internal"
