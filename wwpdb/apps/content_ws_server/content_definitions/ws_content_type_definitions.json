@@ -522,6 +522,13 @@
                     "char",
                     "LIKE"
                 ]
+            },
+            "rcsb_status": {
+                "exp_method": [
+                   "ELECTRON MICROSCOPY",
+                    "char",
+                    "LIKE"
+                ]
             }
         },
         "type": "rdbms"
