@@ -499,6 +499,12 @@
                 "Structure_ID",
                 "database_id",
                 "database_code"
+            ],
+            "audit_author": [
+                "Structure_ID",
+                "name",
+                "pdbx_ordinal",
+                "identifier_ORCID"
             ]
         },
         "resource": {
@@ -511,6 +517,10 @@
                 "da_internal"
             ],
             "database_2": [
+                "da_internal",
+                "da_internal"
+            ],
+            "audit_author": [
                 "da_internal",
                 "da_internal"
             ]
