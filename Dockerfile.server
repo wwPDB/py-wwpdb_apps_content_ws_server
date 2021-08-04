@@ -1,7 +1,7 @@
 FROM python:3.8 as builder
 
 RUN apt update
-RUN apt install -y cmake make git openssh-client gcc g++ musl-dev libmariadb-client libffi-dev rustc cargo flex bison
+RUN apt install -y cmake make git openssh-client gcc g++ musl-dev libmariadb-dev libffi-dev rustc cargo flex bison
 RUN apt clean
 
 # force using bash shell
