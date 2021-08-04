@@ -1,8 +1,8 @@
 FROM python:3.8 as builder
 
-RUN apt update
-RUN apt install -y cmake make git openssh-client gcc g++ musl-dev libmariadb-dev libffi-dev rustc cargo flex bison
-RUN apt clean
+RUN apt-get update
+RUN apt-get install -y cmake make git openssh-client gcc g++ musl-dev libmariadb-dev libffi-dev rustc cargo flex bison
+RUN apt-get clean
 # force using bash shell
 SHELL ["/bin/bash", "-c"]
 
@@ -28,9 +28,9 @@ RUN pip --no-cache-dir install .
 
 FROM python:3.8-slim
 
-RUN apt update
-RUN apt install -y bash libmariadb-dev
-RUN apt clean
+RUN apt-get update
+RUN apt-get install -y bash libmariadb-dev
+RUN apt-get clean
 
 # force using bash shell
 SHELL ["/bin/bash", "-c"]
