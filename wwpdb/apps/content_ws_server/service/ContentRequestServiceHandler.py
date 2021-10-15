@@ -23,8 +23,12 @@ from wwpdb.utils.message_queue.MessageConsumerBase import MessageConsumerBase
 from wwpdb.utils.message_queue.MessageQueueConnection import MessageQueueConnection
 
 from wwpdb.apps.content_ws_server.content.ContentRequest import ContentRequest
-from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_exchange_name, \
-    get_exchange_topic, get_routing_key
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import (
+    get_queue_name,
+    get_exchange_name,
+    get_exchange_topic,
+    get_routing_key,
+)
 
 logger = logging.getLogger()
 logging.basicConfig(
@@ -68,7 +72,9 @@ class MessageConsumerWorker(object):
         url = mqc._getDefaultConnectionUrl()
         self.__mc = MessageConsumer(amqpUrl=url)
         self.__mc.setQueue(queueName=get_queue_name(), routingKey=get_routing_key())
-        self.__mc.setExchange(exchange=get_exchange_name(), exchangeType=get_exchange_topic())
+        self.__mc.setExchange(
+            exchange=get_exchange_name(), exchangeType=get_exchange_topic()
+        )
         #
 
     def run(self):
@@ -101,14 +107,14 @@ class MyDetachedProcess(DetachedProcessBase):
     """
 
     def __init__(
-            self,
-            pidFile="/tmp/DetachedProcessBase.pid",
-            stdin=os.devnull,
-            stdout=os.devnull,
-            stderr=os.devnull,
-            wrkDir="/",
-            gid=None,
-            uid=None,
+        self,
+        pidFile="/tmp/DetachedProcessBase.pid",
+        stdin=os.devnull,
+        stdout=os.devnull,
+        stderr=os.devnull,
+        wrkDir="/",
+        gid=None,
+        uid=None,
     ):
         super(MyDetachedProcess, self).__init__(
             pidFile=pidFile,

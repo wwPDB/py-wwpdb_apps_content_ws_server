@@ -36,11 +36,11 @@ class Register(object):
         #
 
     def makeAccessToken(
-            self,
-            emailAddress,
-            tokenPrefix="CONTENTWS",
-            expireDays=30,
-            tokenFileName="onedep_biocuration_apikey.jwt",
+        self,
+        emailAddress,
+        tokenPrefix="CONTENTWS",
+        expireDays=30,
+        tokenFileName="onedep_biocuration_apikey.jwt",
     ):
         """Test acquire new or existing token and write to disk
         """

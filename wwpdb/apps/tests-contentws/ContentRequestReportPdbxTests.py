@@ -29,10 +29,10 @@ import unittest
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
-TESTOUTPUT = os.path.join(HERE, 'test-output', platform.python_version())
+TESTOUTPUT = os.path.join(HERE, "test-output", platform.python_version())
 if not os.path.exists(TESTOUTPUT):
     os.makedirs(TESTOUTPUT)
-mockTopPath = os.path.join(TOPDIR, 'wwpdb', 'mock-data')
+mockTopPath = os.path.join(TOPDIR, "wwpdb", "mock-data")
 rwMockTopPath = os.path.join(TESTOUTPUT)
 
 # Must create config file before importing ConfigInfo
@@ -41,23 +41,24 @@ from wwpdb.utils.testing.CreateRWTree import CreateRWTree
 
 # Copy site-config and selected items
 crw = CreateRWTree(mockTopPath, TESTOUTPUT)
-crw.createtree(['site-config', 'wsresources'])
+crw.createtree(["site-config", "wsresources"])
 # Use populate r/w site-config using top mock site-config
 SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
 
-from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import (
+    ContentRequestReportPdbx,
+)
 
-FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'
+FORMAT = "[%(levelname)s]-%(module)s.%(funcName)s: %(message)s"
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
 class ContentRequestReportPdbxTests(unittest.TestCase):
-
     def setUp(self):
         self.__verbose = True
-        self.__pdbxFilePath = os.path.join(mockTopPath, 'MODELS', "1kip.cif")
+        self.__pdbxFilePath = os.path.join(mockTopPath, "MODELS", "1kip.cif")
         self.__logFilePath = "my.log"
 
     def tearDown(self):
@@ -71,7 +72,11 @@ class ContentRequestReportPdbxTests(unittest.TestCase):
 
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
-            rD = cr.readFilePdbx(self.__pdbxFilePath, self.__logFilePath, ['entity', 'entity_poly', 'database_2'])
+            rD = cr.readFilePdbx(
+                self.__pdbxFilePath,
+                self.__logFilePath,
+                ["entity", "entity_poly", "database_2"],
+            )
             logger.info("Data file content %r" % rD)
         except:
             logger.exception("Failing test")
@@ -106,14 +111,16 @@ class ContentRequestReportPdbxTests(unittest.TestCase):
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
             ctypeL = cr.getContentTypes()
-            self.assertNotEqual(ctypeL, [], 'Could not parse content types')
+            self.assertNotEqual(ctypeL, [], "Could not parse content types")
             for ctype in ctypeL:
                 if ctype.startswith("report-entry-"):
                     logger.info("Definition %r" % ctype)
-                    rD = cr.extractContent(self.__pdbxFilePath, self.__logFilePath, ctype)
+                    rD = cr.extractContent(
+                        self.__pdbxFilePath, self.__logFilePath, ctype
+                    )
                     logger.info("File content %r" % rD)
                     # 1kip has three entity_poly
-                    self.assertEqual(len(rD['entity_poly']), 3)
+                    self.assertEqual(len(rD["entity_poly"]), 3)
                     ss = json.dumps(rD)
                     logger.info("JSON serialized result %r" % ss)
         except:
@@ -132,8 +139,8 @@ def suiteEntryReport():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
-    if (True):
+    if True:
         mySuite = suiteEntryReport()
         unittest.TextTestRunner(verbosity=2).run(mySuite)

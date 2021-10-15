@@ -44,8 +44,11 @@ from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
 from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
 from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
 
-from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_routing_key, \
-    get_exchange_name
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import (
+    get_queue_name,
+    get_routing_key,
+    get_exchange_name,
+)
 
 logger = logging.getLogger(__name__)
 

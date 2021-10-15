@@ -40,10 +40,9 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    entry_points={
-    },
+    entry_points={},
     #
-    python_requires='>=3.4',
+    python_requires=">=3.4",
     install_requires=[
         "wwpdb.io",
         "wwpdb.utils.config",
@@ -59,7 +58,7 @@ setup(
     # include_package_data = True,
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
-        "": ["*.md", "*.rst", "*.txt", "*.cfg", "*.json"],
+        "": ["*.md", "*.rst", "*.txt", "*.cfg", "*.json"]
     },
     #
     # These basic tests require no database services -
@@ -70,7 +69,7 @@ setup(
     extras_require={
         "dev": ["check-manifest"],
         "test": ["coverage"],
-        "server": ["webob"]
+        "server": ["webob"],
     },
     # Added for
     command_options={

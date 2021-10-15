@@ -18,7 +18,9 @@ __version__ = "V0.07"
 import datetime
 import logging
 
-from wwpdb.apps.content_ws_server.content_definitions.ContentDefintions import get_content_definition_file_path
+from wwpdb.apps.content_ws_server.content_definitions.ContentDefintions import (
+    get_content_definition_file_path,
+)
 
 try:
     import json
@@ -44,7 +46,9 @@ class ContentRequestReportIo(object):
         logger.info("Starting with siteId %r" % self.__siteId)
         self.__D = None
         #
-        self.__lockDirPath = self.__cI.get("SITE_SERVICE_REGISTRATION_LOCKDIR_PATH", '.')
+        self.__lockDirPath = self.__cI.get(
+            "SITE_SERVICE_REGISTRATION_LOCKDIR_PATH", "."
+        )
         lockutils.set_defaults(self.__lockDirPath)
 
     def __setup(self):
@@ -90,7 +94,7 @@ class ContentRequestReportIo(object):
 
         return {}
 
-    @lockutils.synchronized('wscontenttypedef.exceptionfile-lock', external=True)
+    @lockutils.synchronized("wscontenttypedef.exceptionfile-lock", external=True)
     def writeContentDefinitionDictionary(self, contentDefD, backup=True):
         """  Write the dictionary containing web service content type definitions.
 
@@ -100,7 +104,7 @@ class ContentRequestReportIo(object):
 
         try:
             if backup:
-                bp = fp + datetime.datetime.now().strftime('-%Y-%m-%d-%H-%M-%S')
+                bp = fp + datetime.datetime.now().strftime("-%Y-%m-%d-%H-%M-%S")
                 d = self.__readContentDefinitionDictionary()
                 with open(bp, "w") as outfile:
                     json.dump(d, outfile, indent=4)

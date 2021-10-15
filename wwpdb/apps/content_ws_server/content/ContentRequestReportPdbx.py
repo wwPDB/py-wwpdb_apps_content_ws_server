@@ -20,7 +20,9 @@ import sys
 import time
 from mmcif.io.IoAdapterCore import IoAdapterCore
 
-from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo
+from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import (
+    ContentRequestReportIo,
+)
 
 #
 logger = logging.getLogger()
@@ -58,7 +60,9 @@ class ContentRequestReportPdbx(object):
         try:
             io = IoAdapterCore(verbose=self.__verbose, log=sys.stderr)
             if catNameList and len(catNameList) > 0:
-                containerList = io.readFile(str(filePath), selectList=catNameList, logFilePath=str(logFilePath))
+                containerList = io.readFile(
+                    str(filePath), selectList=catNameList, logFilePath=str(logFilePath)
+                )
             else:
                 containerList = io.readFile(str(filePath), logFilePath=str(logFilePath))
             #
@@ -75,25 +79,25 @@ class ContentRequestReportPdbx(object):
     def __cmpfunc(self, v, target, myType, myOp):
         """  Internal function to compare simple types -
         """
-        if myType in ['string', 'char']:
+        if myType in ["string", "char"]:
             vv = str(v)
-        elif myType == 'int':
+        elif myType == "int":
             vv = int(str(v))
-        elif myType in ['float', 'double']:
+        elif myType in ["float", "double"]:
             vv = float(str(v))
         else:
             vv = str(v)
         #
-        if type in ['string', 'char', 'float', 'double', 'int']:
-            if myOp in ['eq']:
+        if type in ["string", "char", "float", "double", "int"]:
+            if myOp in ["eq"]:
                 return vv == target
-            elif myOp in ['gt']:
+            elif myOp in ["gt"]:
                 return vv > target
-            elif myOp in ['ge']:
+            elif myOp in ["ge"]:
                 return vv >= target
-            elif myOp in ['lt']:
+            elif myOp in ["lt"]:
                 return vv < target
-            elif myOp in ['le']:
+            elif myOp in ["le"]:
                 return vv <= target
             else:
                 return False
@@ -107,23 +111,25 @@ class ContentRequestReportPdbx(object):
         try:
             cDef = self.getContentTypeDef(requestContentType)
             logger.info("Content definition %r" % cDef.items())
-            logger.info("Content keys definition %r" % cDef['content'].keys())
+            logger.info("Content keys definition %r" % cDef["content"].keys())
             # Note the str() filter here -
-            myCategoryList = [str(c) for c in cDef['content'].keys()]
-            myConditionList = [str(c) for c in cDef['conditions'].keys()]
+            myCategoryList = [str(c) for c in cDef["content"].keys()]
+            myConditionList = [str(c) for c in cDef["conditions"].keys()]
             #
             if len(cDef) < 1:
                 return rD
             logger.info("Category list in definition %r" % myCategoryList)
-            myContainerList = self.readFilePdbx(pdbxFilePath, logFilePath, myCategoryList)
+            myContainerList = self.readFilePdbx(
+                pdbxFilePath, logFilePath, myCategoryList
+            )
             for container in myContainerList:
                 catNameList = container.getObjNameList()
                 for catName in myCategoryList:
                     if catName in catNameList:
                         rD[catName] = []
-                        catSel = cDef['content'][catName]
+                        catSel = cDef["content"][catName]
                         if catName in myConditionList:
-                            cndD = cDef['conditions'][catName]
+                            cndD = cDef["conditions"][catName]
                         else:
                             cndD = {}
                         cObj = container.getObj(catName)
@@ -143,7 +149,9 @@ class ContentRequestReportPdbx(object):
                             rD[catName].append(od)
         except Exception as e:
             logger.exception(
-                "Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
+                "Extraction processing failing for %r content type %r"
+                % (pdbxFilePath, requestContentType)
+            )
             logger.exception(e)
         #
         return rD
