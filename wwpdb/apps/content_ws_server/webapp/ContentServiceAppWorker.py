@@ -381,6 +381,16 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             contentType = pD["request_content_type"]
             formatType = pD["request_format_type"]
             #
+            # First check if we are handling this entry... If
+            # config variable not set - will return ['None']
+            siteCoverage = [
+                x.strip()
+                for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(
+                        ","
+                )
+            ]
+            
+            # Content type
             if entryId != "unassigned" and contentType.startswith("report-entry-"):
                 ok = True
                 fName = entryId + "_" + contentType + "." + formatType
@@ -392,14 +402,6 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 cIDS = ConfigInfoDataSet()
                 siteId = cIDS.getSiteId(entryId)
                 logger.debug("Entry siteid is %r" % siteId)
-                # First check if we are handling this entry... If
-                # config variable not set - will return ['None']
-                siteCoverage = [
-                    x.strip()
-                    for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(
-                        ","
-                    )
-                ]
 
                 logger.debug(
                     "Entry %r my site %r cover %r"
@@ -431,9 +433,22 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             elif contentType.startswith("report-summary-"):
                 ok = True
                 fName = contentType + "." + formatType
+
+                # Check if our site can handle...
+                qs = self._reqObj.getValueOrDefault(
+                    "query_site", default=None
+                )
+
+                # Check if request is for a separate site and if can access
+                if qs and qs != self._siteId and qs not in siteCoverage:
+                    logger.error("Request for %s but not in %s or %s", qs, self._siteId, siteCoverage)
+                    ok = False
+
+                pD["query_site"] = qs
+
                 logger.debug(
-                    "Summary content type %r format type %r status %r"
-                    % (contentType, formatType, ok)
+                    "Summary content type %r format type %r site %s status %r"
+                    % (contentType, formatType, qs, ok)
                 )
 
             if ok:

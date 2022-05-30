@@ -213,7 +213,11 @@ class ContentRequest(object):
                         ofh.write(ss)
                     ok = True
             elif contentType.startswith("report-summary-"):
-                cr = ContentRequestReportDb(siteId=self.__siteId)
+                site = self.__siteId
+                qs = pD["query_site"]
+                if qs is not None:
+                    site = qs
+                cr = ContentRequestReportDb(siteId=site)
                 ctL = cr.getContentTypes()
                 if contentType in ctL:
                     rD = cr.extractContent(contentType)
