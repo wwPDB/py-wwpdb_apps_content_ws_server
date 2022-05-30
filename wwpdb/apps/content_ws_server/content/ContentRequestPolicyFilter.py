@@ -22,7 +22,7 @@ logger = logging.getLogger()
 
 class ContentRequestPolicyFilter(object):
     """
-     Manage various policy filters for entry data. A post request filter.
+    Manage various policy filters for entry data. A post request filter.
 
     """
 

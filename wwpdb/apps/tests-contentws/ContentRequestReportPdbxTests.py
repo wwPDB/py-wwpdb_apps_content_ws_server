@@ -29,99 +29,95 @@ import unittest
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
-TESTOUTPUT = os.path.join(HERE, 'test-output', platform.python_version())
+TESTOUTPUT = os.path.join(HERE, "test-output", platform.python_version())
 if not os.path.exists(TESTOUTPUT):
     os.makedirs(TESTOUTPUT)
-mockTopPath = os.path.join(TOPDIR, 'wwpdb', 'mock-data')
+mockTopPath = os.path.join(TOPDIR, "wwpdb", "mock-data")
 rwMockTopPath = os.path.join(TESTOUTPUT)
 
 # Must create config file before importing ConfigInfo
-from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup
-from wwpdb.utils.testing.CreateRWTree import CreateRWTree
+from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup  # noqa: E402
+from wwpdb.utils.testing.CreateRWTree import CreateRWTree  # noqa: E402
 
 # Copy site-config and selected items
 crw = CreateRWTree(mockTopPath, TESTOUTPUT)
-crw.createtree(['site-config', 'wsresources'])
+crw.createtree(["site-config", "wsresources"])
 # Use populate r/w site-config using top mock site-config
 SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
 
-from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx
+from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx  # noqa: E402
 
-FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'
+FORMAT = "[%(levelname)s]-%(module)s.%(funcName)s: %(message)s"
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
 class ContentRequestReportPdbxTests(unittest.TestCase):
-
     def setUp(self):
         self.__verbose = True
-        self.__pdbxFilePath = os.path.join(mockTopPath, 'MODELS', "1kip.cif")
+        self.__pdbxFilePath = os.path.join(mockTopPath, "MODELS", "1kip.cif")
         self.__logFilePath = "my.log"
 
     def tearDown(self):
         pass
 
     def testEntryReader(self):
-        """Test case -  report type status
-        """
+        """Test case -  report type status"""
         startTime = time.time()
         logger.info("Starting")
 
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
-            rD = cr.readFilePdbx(self.__pdbxFilePath, self.__logFilePath, ['entity', 'entity_poly', 'database_2'])
-            logger.info("Data file content %r" % rD)
-        except:
+            rD = cr.readFilePdbx(self.__pdbxFilePath, self.__logFilePath, ["entity", "entity_poly", "database_2"])
+            logger.info("Data file content %r", rD)
+        except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failing test")
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
+        logger.info("Completed ad (%.2f seconds)", endTime - startTime)
 
     def testContentTypeReader(self):
-        """Test case -  report type status
-        """
+        """Test case -  report type status"""
         startTime = time.time()
         logger.info("Starting")
 
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
             rL = cr.getContentTypes()
-            logger.info("Content type definitions %r" % rL)
-        except:
+            logger.info("Content type definitions %r", rL)
+        except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failing test")
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
+        logger.info("Completed ad (%.2f seconds)", endTime - startTime)
 
     def testEntryReport(self):
-        """Test case -  report type status
-        """
+        """Test case -  report type status"""
         startTime = time.time()
         logger.info("Starting")
 
         try:
             cr = ContentRequestReportPdbx(self.__verbose)
             ctypeL = cr.getContentTypes()
-            self.assertNotEqual(ctypeL, [], 'Could not parse content types')
+            self.assertNotEqual(ctypeL, [], "Could not parse content types")
             for ctype in ctypeL:
                 if ctype.startswith("report-entry-"):
-                    logger.info("Definition %r" % ctype)
+                    logger.info("Definition %r", ctype)
                     rD = cr.extractContent(self.__pdbxFilePath, self.__logFilePath, ctype)
-                    logger.info("File content %r" % rD)
+                    logger.info("File content %r", rD)
                     # 1kip has three entity_poly
-                    self.assertEqual(len(rD['entity_poly']), 3)
+                    self.assertEqual(len(rD["entity_poly"]), 3)
                     ss = json.dumps(rD)
-                    logger.info("JSON serialized result %r" % ss)
-        except:
+                    logger.info("JSON serialized result %r", ss)
+        except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failing test")
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed ad (%.2f seconds)\n" % (endTime - startTime))
+        logger.info("Completed ad (%.2f seconds)", endTime - startTime)
 
 
 def suiteEntryReport():
@@ -132,8 +128,7 @@ def suiteEntryReport():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
-    if (True):
-        mySuite = suiteEntryReport()
-        unittest.TextTestRunner(verbosity=2).run(mySuite)
+    mySuite = suiteEntryReport()
+    unittest.TextTestRunner(verbosity=2).run(mySuite)

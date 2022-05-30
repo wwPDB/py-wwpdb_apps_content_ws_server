@@ -40,9 +40,7 @@ logger = logging.getLogger()
 
 
 class WebServiceApp(object):
-    """Handle request and response object processing for various web services.
-
-    """
+    """Handle request and response object processing for various web services."""
 
     def __init__(self, parameterDict={}):
         """
@@ -56,14 +54,12 @@ class WebServiceApp(object):
         #
         cI = ConfigInfo(siteId)
         self.__reqObj.setTopSessionPath(cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH"))
-        self.__reqObj.setRequestPathPrefix(
-            cI.get("SITE_WEB_SERVICE_PATH_PREFIX", default="/service")
-        )
+        self.__reqObj.setRequestPathPrefix(cI.get("SITE_WEB_SERVICE_PATH_PREFIX", default="/service"))
         self.__reqObj.setDefaultReturnFormat(return_format="json")
         #
 
     def run(self):
-        """ Execute request and package results in response dictionary.
+        """Execute request and package results in response dictionary.
 
         :Returns:
              A dictionary containing response data for the input request.
@@ -82,10 +78,7 @@ class WebServiceApp(object):
         #  Each class implements a run() method that returns a ServiceSessionState object -
         #
         sst = swrk.run()
-        logger.debug(
-            "Service response object for request path: %s\n   %r"
-            % (requestPath, sst.getAppDataDict())
-        )
+        logger.debug("Service response object for request path: %s\n   %r" % (requestPath, sst.getAppDataDict()))
         sr = self.__buildResponse(sst)
         #
         # Return only the dictionary from the response object -
@@ -93,9 +86,7 @@ class WebServiceApp(object):
         return sr
 
     def __buildResponse(self, sst):
-        """ Using the content from the input service state object, build a service response object.
-
-        """
+        """Using the content from the input service state object, build a service response object."""
         rD = {}
         sr = ServiceResponse(returnFormat="json", injectStatus=False)
         #
@@ -119,9 +110,7 @@ class WebServiceApp(object):
             ok = False
             for f in fL[0:1]:
                 # f = (fileName, filePath, contentType, md5Digest)
-                ok = sr.setBinaryFile(
-                    f[1], attachmentFlag=False, serveCompressed=True, md5Digest=f[3]
-                )
+                ok = sr.setBinaryFile(f[1], attachmentFlag=False, serveCompressed=True, md5Digest=f[3])
             if not ok:
                 sr.setReturnFormat("json")
                 rD["errorflag"] = True

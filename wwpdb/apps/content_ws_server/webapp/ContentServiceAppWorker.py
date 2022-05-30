@@ -44,8 +44,7 @@ from wwpdb.utils.ws_utils.ServiceUploadUtils import ServiceUploadUtils
 from wwpdb.utils.ws_utils.ServiceUtilsMisc import getMD5
 from wwpdb.utils.ws_utils.ServiceWorkerBase import ServiceWorkerBase
 
-from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_routing_key, \
-    get_exchange_name
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_routing_key, get_exchange_name
 
 logger = logging.getLogger(__name__)
 
@@ -53,15 +52,13 @@ logger = logging.getLogger(__name__)
 class ContentServiceAppWorker(ServiceWorkerBase):
     def __init__(self, reqObj=None, sessionDataPrefix=None):
         """
-         Worker methods for annotation tasks.
+        Worker methods for annotation tasks.
 
-         Performs URL - application mapping and application launching
-         for annotation tasks module.
+        Performs URL - application mapping and application launching
+        for annotation tasks module.
 
         """
-        super(ContentServiceAppWorker, self).__init__(
-            reqObj=reqObj, sessionDataPrefix=sessionDataPrefix
-        )
+        super(ContentServiceAppWorker, self).__init__(reqObj=reqObj, sessionDataPrefix=sessionDataPrefix)
         #
         #  URL to method mapping -----  the service names are case insensitive --
         #
@@ -110,8 +107,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return self._run(requestPath)
 
     def _dumpOp(self):
-        """  Dump the request object dictionary ----
-        """
+        """Dump the request object dictionary ----"""
         logger.debug("Starting now")
         sst = ServiceSessionState()
         rD = self._reqObj.getDictionary()
@@ -152,9 +148,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def _sessionOp(self):
-        """ Create a new session -
+        """Create a new session -
 
-            :Returns: sst service session state object
+        :Returns: sst service session state object
 
         """
         logger.debug("Starting now")
@@ -174,10 +170,10 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def _uploadFileOp(self):
-        """ Upload callback method -- for model and experimental files -
+        """Upload callback method -- for model and experimental files -
 
-            Copy input model and experimental data files to the current session directory and
-            return file name and entry id details to the caller.
+        Copy input model and experimental data files to the current session directory and
+        return file name and entry id details to the caller.
 
         """
 
@@ -225,8 +221,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def __getSessionFile(self, contentType, fileFormat):
-        """ Return the selected file path or None -
-        """
+        """Return the selected file path or None -"""
         try:
             sD = self._getSessionStoreDict()
             fName, fFormat = sD[contentType]
@@ -240,8 +235,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return None
 
     def __fetchModelFile(self, siteId, entryId, fileSource="archive"):
-        """  Fetch model file first from archive then from the deposit file source ...
-        """
+        """Fetch model file first from archive then from the deposit file source ..."""
         generateModel = True
 
         pdbxFilePath = None
@@ -258,13 +252,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 siteId=siteId,
                 verbose=True,
             )
-            fl = dx.getContentTypeFileList(
-                fileSource="archive", contentTypeList=["model"]
-            )
+            fl = dx.getContentTypeFileList(fileSource="archive", contentTypeList=["model"])
             if len(fl) > 0:
-                pdbxFilePath = dx.fetch(
-                    contentType="model", formatType="pdbx", version="latest"
-                )
+                pdbxFilePath = dx.fetch(contentType="model", formatType="pdbx", version="latest")
             elif generateModel:
                 pdbxFilePath = self.__depuiGenerateModelFile(siteId, entryId)
 
@@ -277,9 +267,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     siteId=siteId,
                     verbose=True,
                 )
-                pdbxFilePath = dx.fetch(
-                    contentType="model", formatType="pdbx", version="latest"
-                )
+                pdbxFilePath = dx.fetch(contentType="model", formatType="pdbx", version="latest")
 
         except Exception as e:
             logger.exception("Fetch model failing %r" % entryId)
@@ -287,8 +275,8 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return pdbxFilePath
 
     def __depuiGenerateModelFile(self, siteId, entryId):
-        """  Uses code in the deposition system to generate a model file in the session directory.
-             returns path to filename or None if it fails
+        """Uses code in the deposition system to generate a model file in the session directory.
+        returns path to filename or None if it fails
         """
         logger.debug("generate %r from depui\n" % entryId)
         sessDir = self._reqObj.getSessionObj().getPath()
@@ -299,26 +287,17 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         fOut.write("#!/usr/bin/env python\n")
         fOut.write("import os, sys\n")
         # Setup the Django environment
-        fOut.write(
-            'os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wwpdb.apps.deposit.settings")\n'
-        )
+        fOut.write('os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wwpdb.apps.deposit.settings")\n')
         fOut.write("import django\n")
         fOut.write("django.setup()\n")
-        fOut.write(
-            "from wwpdb.apps.deposit.depui.generate_model import generate_model\n"
-        )
-        fOut.write(
-            'generate_model(depID="%s", sessionDir = "%s").write_out_cif_from_depui()'
-            % (entryId, sessDir)
-        )
+        fOut.write("from wwpdb.apps.deposit.depui.generate_model import generate_model\n")
+        fOut.write('generate_model(depID="%s", sessionDir = "%s").write_out_cif_from_depui()' % (entryId, sessDir))
         fOut.close()
         cmdfile = os.path.join(sessDir, "generate.sh")
         fOut = open(cmdfile, "w")
         fOut.write("#!/bin/sh\n")
         fOut.write("export WWPDB_SITE_ID=%s\n" % siteId)
-        fOut.write(
-            "export PYTHONPATH=$TOP_WWPDB_PYTHON_DIR/wwpdb/apps/deposit:$PYTHONPATH\n"
-        )
+        fOut.write("export PYTHONPATH=$TOP_WWPDB_PYTHON_DIR/wwpdb/apps/deposit:$PYTHONPATH\n")
         fOut.write("python %s\n" % cmdPy)
         fOut.close()
         os.chmod(cmdfile, 0o777)
@@ -341,8 +320,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return None
 
     def _submitContentRequestOp(self):
-        """  Submit entry content service request  -
-        """
+        """Submit entry content service request  -"""
         logger.debug("Content request method starting now")
         sst = ServiceSessionState()
         #            Join an existing session -
@@ -357,25 +335,13 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             #
             #   Check for a test request
             #
-            pD["worker_test_mode"] = self._reqObj.getValueOrDefault(
-                "worker_test_mode", default=False
-            )
-            pD["worker_test_duration"] = self._reqObj.getValueOrDefault(
-                "worker_test_duration", default=1
-            )
-            pD["exp_method"] = self._reqObj.getValueOrDefault(
-                "exp_method", default="unassigned"
-            )
+            pD["worker_test_mode"] = self._reqObj.getValueOrDefault("worker_test_mode", default=False)
+            pD["worker_test_duration"] = self._reqObj.getValueOrDefault("worker_test_duration", default=1)
+            pD["exp_method"] = self._reqObj.getValueOrDefault("exp_method", default="unassigned")
             #
-            pD["request_dataset_id"] = self._reqObj.getValueOrDefault(
-                "request_dataset_id", default="unassigned"
-            )
-            pD["request_content_type"] = self._reqObj.getValueOrDefault(
-                "request_content_type", default="unassigned"
-            )
-            pD["request_format_type"] = self._reqObj.getValueOrDefault(
-                "request_format_type", default="unassigned"
-            )
+            pD["request_dataset_id"] = self._reqObj.getValueOrDefault("request_dataset_id", default="unassigned")
+            pD["request_content_type"] = self._reqObj.getValueOrDefault("request_content_type", default="unassigned")
+            pD["request_format_type"] = self._reqObj.getValueOrDefault("request_format_type", default="unassigned")
             #
             entryId = pD["request_dataset_id"]
             contentType = pD["request_content_type"]
@@ -383,34 +349,21 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             #
             # First check if we are handling this entry... If
             # config variable not set - will return ['None']
-            siteCoverage = [
-                x.strip()
-                for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(
-                        ","
-                )
-            ]
-            
+            siteCoverage = [x.strip() for x in str(self._cI.get("SITE_WS_CONTENT_SITE_COVERAGE")).split(",")]
+
             # Content type
             if entryId != "unassigned" and contentType.startswith("report-entry-"):
                 ok = True
                 fName = entryId + "_" + contentType + "." + formatType
-                logger.debug(
-                    "Entry content type %r format type %r and dataset id %r status %r"
-                    % (contentType, formatType, entryId, ok)
-                )
+                logger.debug("Entry content type %r format type %r and dataset id %r status %r" % (contentType, formatType, entryId, ok))
 
                 cIDS = ConfigInfoDataSet()
                 siteId = cIDS.getSiteId(entryId)
                 logger.debug("Entry siteid is %r" % siteId)
 
-                logger.debug(
-                    "Entry %r my site %r cover %r"
-                    % (siteId, self._siteId, siteCoverage)
-                )
+                logger.debug("Entry %r my site %r cover %r" % (siteId, self._siteId, siteCoverage))
                 if siteId != self._siteId and siteId not in siteCoverage:
-                    logger.debug(
-                        "Entry %r resides on another site %r" % (entryId, siteId)
-                    )
+                    logger.debug("Entry %r resides on another site %r" % (entryId, siteId))
 
                     # Simple lookup if we can redirect
                     siteMap = self._cI.get("PROJECT_CONTENTWS_SERVICE_DICTIONARY")
@@ -422,9 +375,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                         ok = False
                 else:
                     # Look up with siteId info for depositions
-                    pdbxFilePath = self.__fetchModelFile(
-                        siteId, entryId, fileSource="archive"
-                    )
+                    pdbxFilePath = self.__fetchModelFile(siteId, entryId, fileSource="archive")
                     if os.access(pdbxFilePath, os.R_OK):
                         pD["session_pdbx_file_path"] = str(pdbxFilePath)
                     else:
@@ -435,9 +386,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 fName = contentType + "." + formatType
 
                 # Check if our site can handle...
-                qs = self._reqObj.getValueOrDefault(
-                    "query_site", default=None
-                )
+                qs = self._reqObj.getValueOrDefault("query_site", default=None)
 
                 # Check if request is for a separate site and if can access
                 if qs and qs != self._siteId and qs not in siteCoverage:
@@ -446,10 +395,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
                 pD["query_site"] = qs
 
-                logger.debug(
-                    "Summary content type %r format type %r site %s status %r"
-                    % (contentType, formatType, qs, ok)
-                )
+                logger.debug("Summary content type %r format type %r site %s status %r" % (contentType, formatType, qs, ok))
 
             if ok:
                 resultPath = os.path.join(self._sessionPath, fName)
@@ -523,8 +469,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
     ##
     def _indexOp(self):
-        """  Returns an index of service output files -
-        """
+        """Returns an index of service output files -"""
         sst = ServiceSessionState()
         #            join an existing session -
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
@@ -563,8 +508,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
     ##
     def _downloadOp(self):
-        """  Download a file in the current session by type or by name -
-        """
+        """Download a file in the current session by type or by name -"""
         logger.debug("Starting now")
         sst = ServiceSessionState()
         try:
@@ -599,8 +543,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def _activityOp(self):
-        """  Returns a summary of service activity  - for authenticated sessions -
-        """
+        """Returns a summary of service activity  - for authenticated sessions -"""
         sst = ServiceSessionState()
         #            join an existing session -
         ok = self._getSession(new=False, useContext=True, contextOverWrite=True)
@@ -629,9 +572,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     dD["activity_summary"] = self._getServiceActivitySummary()
                     sst.setAppDataDict(dD, format="json")
                     sst.setServiceCompletionFlag(True)
-                    sst.setServiceStatusText(
-                        "Activity history length %d" % len(dD["activity_summary"])
-                    )
+                    sst.setServiceStatusText("Activity history length %d" % len(dD["activity_summary"]))
                 except Exception as e:
                     logger.exception(e)
                     dD["activity_summary"] = {}
@@ -643,8 +584,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def __runTimeout(self, cmdFile=None, logFile=None, timeout=10):
-        """ Execute the command as a subprocess with a timeout.
-        """
+        """Execute the command as a subprocess with a timeout."""
         logger.debug("STARTING with time out set at %d (seconds)" % timeout)
         #
         start = datetime.datetime.now()
@@ -663,14 +603,10 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 if (now - start).seconds > timeout:
                     os.killpg(process.pid, signal.SIGKILL)
                     os.waitpid(-1, os.WNOHANG)
-                    logger.debug(
-                        "Execution terminated by timeout %d (seconds)" % timeout
-                    )
+                    logger.debug("Execution terminated by timeout %d (seconds)" % timeout)
                     if logFile is not None:
                         ofh = open(logFile, "a")
-                        ofh.write(
-                            "Execution terminated by timeout %d (seconds)\n" % timeout
-                        )
+                        ofh.write("Execution terminated by timeout %d (seconds)\n" % timeout)
                         ofh.close()
                     #
                     return None

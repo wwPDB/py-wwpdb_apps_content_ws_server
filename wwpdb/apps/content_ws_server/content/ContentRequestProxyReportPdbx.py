@@ -25,8 +25,8 @@ logger = logging.getLogger()
 
 class ContentRequestProxyReportPdbx(object):
     """
-     Fetch content and prepare report from PDBx content from a remote service using
-     biocuration api.
+    Fetch content and prepare report from PDBx content from a remote service using
+    biocuration api.
 
     """
 
@@ -50,14 +50,9 @@ class ContentRequestProxyReportPdbx(object):
             pass
         return api_key
 
-    def retrieveProxyReport(
-            self, dataSetId, apiUrl, contentType, formatType, reportPath
-    ):
+    def retrieveProxyReport(self, dataSetId, apiUrl, contentType, formatType, reportPath):
         """Retrieve a report from a remote server"""
-        logger.debug(
-            "dataSetId %r apiUrl %r contentType %r reportPath %r"
-            % (dataSetId, apiUrl, contentType, reportPath)
-        )
+        logger.debug("dataSetId %r apiUrl %r contentType %r reportPath %r" % (dataSetId, apiUrl, contentType, reportPath))
 
         apiKeyFileName = self.__cI.get("SITE_WS_CONTENT_WWPDB_KEY")
         apiKey = self.__readApiKey(apiKeyFileName)

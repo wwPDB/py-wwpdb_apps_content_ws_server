@@ -19,6 +19,7 @@ import datetime
 import logging
 import sys
 import time
+
 #
 #  -- supporting queries against only DA_INTERNAL in this service --
 from wwpdb.utils.db.DaInternalSchemaDef import DaInternalSchemaDef
@@ -35,7 +36,7 @@ logger = logging.getLogger()
 
 class ContentRequestReportDb(MyConnectionBase):
     """
-     Fetch content and prepare report from PDBx content -
+    Fetch content and prepare report from PDBx content -
 
     """
 
@@ -57,7 +58,7 @@ class ContentRequestReportDb(MyConnectionBase):
         return self.__crio.getContentTypes()
 
     def extractContent(self, requestContentType):
-        """ Apply the input 'requestContentType' to the current database state -
+        """Apply the input 'requestContentType' to the current database state -
 
 
         Example -
@@ -73,12 +74,12 @@ class ContentRequestReportDb(MyConnectionBase):
         try:
             cDef = self.getContentTypeDef(requestContentType)
             logger.debug("Content definition %r" % cDef.items())
-            logger.debug("Content keys definition %r" % cDef['content'].keys())
-            logger.debug("Content resource %r" % cDef['resource'])
+            logger.debug("Content keys definition %r" % cDef["content"].keys())
+            logger.debug("Content resource %r" % cDef["resource"])
             #
             #  -- Note the str() filter here --
-            myCategoryList = [str(c) for c in cDef['content'].keys()]
-            myConditionList = [str(c) for c in cDef['conditions'].keys()]
+            myCategoryList = [str(c) for c in cDef["content"].keys()]
+            myConditionList = [str(c) for c in cDef["conditions"].keys()]
 
             #
             if len(cDef) < 1:
@@ -90,13 +91,13 @@ class ContentRequestReportDb(MyConnectionBase):
             #
             for catName in myCategoryList:
                 rD[catName] = []
-                sList = cDef['content'][catName]
-                myResource, myDatabase = cDef['resource'][catName]
+                sList = cDef["content"][catName]
+                myResource, myDatabase = cDef["resource"][catName]
                 logger.debug("Resource %r database %r" % (myResource, myDatabase))
                 if myResource.upper() in ["DA_INTERNAL", "STATUS"]:
-                    if myDatabase in ['da_internal', 'da_internal_prod', 'da_internal_combine']:
+                    if myDatabase in ["da_internal", "da_internal_prod", "da_internal_combine"]:
                         sDef = DaInternalSchemaDef(verbose=self.__verbose, log=sys.stderr, databaseName=myDatabase)
-                    elif myDatabase in ['status']:
+                    elif myDatabase in ["status"]:
                         sDef = WorkflowSchemaDef(verbose=self.__verbose, log=sys.stderr)
                     else:
                         sDef = {}
@@ -116,7 +117,7 @@ class ContentRequestReportDb(MyConnectionBase):
                 if catName in myConditionList:
                     # {'entity_poly': {'entity_id': ('1', 'char', 'eq')},
                     sqlCondition = MyDbConditionSqlGen(schemaDefObj=sDef, verbose=self.__verbose, log=sys.stderr)
-                    cndD = cDef['conditions'][catName]
+                    cndD = cDef["conditions"][catName]
                     cList = []
                     for k, v in cndD.items():
                         cList.append(((catName.upper(), k.upper()), v[2].upper(), (v[0].upper(), v[1].upper())))
@@ -139,8 +140,7 @@ class ContentRequestReportDb(MyConnectionBase):
         return rD
 
     def __processQuery(self, resourceName, sList, sqlS):
-        """ Process query  -
-        """
+        """Process query  -"""
         startTime = time.time()
         #
         # config the db auth info

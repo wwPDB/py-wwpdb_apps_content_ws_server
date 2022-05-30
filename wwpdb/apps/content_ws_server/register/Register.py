@@ -28,28 +28,24 @@ logger.setLevel(logging.INFO)
 
 
 class Register(object):
-    """  Off-line API registration -
-    """
+    """Off-line API registration -"""
 
     def __init__(self):
         pass
         #
 
     def makeAccessToken(
-            self,
-            emailAddress,
-            tokenPrefix="CONTENTWS",
-            expireDays=30,
-            tokenFileName="onedep_biocuration_apikey.jwt",
+        self,
+        emailAddress,
+        tokenPrefix="CONTENTWS",
+        expireDays=30,
+        tokenFileName="onedep_biocuration_apikey.jwt",
     ):
-        """Test acquire new or existing token and write to disk
-        """
+        """Test acquire new or existing token and write to disk"""
         try:
             tU = JwtTokenUtils(tokenPrefix=tokenPrefix)
             tokenId, jwtToken = tU.getToken(emailAddress, expireDays=expireDays)
-            logging.info(
-                "For e-mail %r token ID %r is %r " % (emailAddress, tokenId, jwtToken)
-            )
+            logging.info("For e-mail %r token ID %r is %r " % (emailAddress, tokenId, jwtToken))
             tD = tU.parseToken(jwtToken)
             logging.info("token %r payload %r " % (tokenId, tD))
             #
@@ -81,9 +77,7 @@ def main():
         type=str,
         default="jdwestbrook@gmail.com",
     )
-    parser.add_argument(
-        "--tokenPrefix", help="tokenPrefix", type=str, default="CONTENTWS"
-    )
+    parser.add_argument("--tokenPrefix", help="tokenPrefix", type=str, default="CONTENTWS")
     parser.add_argument("--expireDays", help="expireDays", type=int, default=30)
 
     args = parser.parse_args()

@@ -8,4 +8,4 @@ def get_content_definition_file_path():
 
 
 def get_content_definition_file():
-    return 'ws_content_type_definitions.json'
+    return "ws_content_type_definitions.json"
