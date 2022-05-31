@@ -343,6 +343,11 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
                 cIDS = ConfigInfoDataSet()
                 siteId = cIDS.getSiteId(entryId)
+
+                # On development server
+                if siteId == "UNASSIGNED":
+                    siteId = self._siteId
+
                 logger.debug("Entry siteid is %r", siteId)
 
                 logger.debug("Entry %r my site %r cover %r", siteId, self._siteId, siteCoverage)
