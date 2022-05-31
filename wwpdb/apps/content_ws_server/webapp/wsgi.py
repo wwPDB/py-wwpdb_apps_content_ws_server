@@ -64,7 +64,7 @@ class MyRequestApp(object):
             for name, value in request.params.items():
                 outL.append("  ++  Request parameter:    %s:  %r\n" % (name, value))
         except Exception as e:
-            logger.exception("FAILING for service %s" % self.__serviceName)
+            logger.exception("FAILING for service %s", self.__serviceName)
             logger.exception(e)
         return outL
 
@@ -75,7 +75,6 @@ class MyRequestApp(object):
                 return True
         except Exception as e:
             logger.exception(e)
-            pass
 
         return False
 
@@ -92,7 +91,7 @@ class MyRequestApp(object):
             if tD["errorFlag"]:
                 return tD
             tD = jtu.parseToken(tD["token"])
-            logger.debug("authVerify tD %r" % tD)
+            logger.debug("authVerify tD %r", tD)
             #
             if (len(serviceUserId) > 0) and (serviceUserId != str(tD["sub"])):
                 tD["errorMessage"] = "Token user mismatch"
@@ -102,7 +101,7 @@ class MyRequestApp(object):
 
             return tD
         except Exception as e:
-            logger.exception("Failed site %r auth header %r" % (siteId, authHeader))
+            logger.exception("Failed site %r auth header %r", siteId, authHeader)
             logger.exception(e)
             return tD
 
@@ -110,7 +109,7 @@ class MyRequestApp(object):
         """Request callable entry point"""
         #
         myRequest = Request(environment)
-        logger.debug("%s" % ("\n ++ ".join(self.__dumpRequest(request=myRequest))))
+        logger.debug("%s", "\n ++ ".join(self.__dumpRequest(request=myRequest)))
         #
         myParameterDict = {"request_host": [""], "wwpdb_site_id": [getSiteId()], "service_user_id": [""], "remote_addr": [""]}
         #
@@ -134,7 +133,7 @@ class MyRequestApp(object):
             myParameterDict["request_path"] = [myRequest.path.lower()]
 
         except Exception as e:
-            logger.exception("Exception processing %s request parameters" % self.__serviceName)
+            logger.exception("Exception processing %s request parameters", self.__serviceName)
             logger.exception(e)
 
         ###
@@ -145,11 +144,11 @@ class MyRequestApp(object):
         try:
             ok = True
             apiTokFlag = self.__isHeaderApiToken(myRequest)
-            logger.debug("Request API token flag: %s" % apiTokFlag)
+            logger.debug("Request API token flag: %s", apiTokFlag)
             if self.__authVerifyFlag and apiTokFlag:
                 #  Verify API token -
                 authD = self.__authVerify(myRequest.headers.get("wwpdb-api-token"), myParameterDict["wwpdb_site_id"][0], myParameterDict["service_user_id"][0])
-                logger.debug("Authorization error flag is %r" % authD["errorFlag"])
+                logger.debug("Authorization error flag is %r", authD["errorFlag"])
                 if authD["errorFlag"]:
                     ok = False
                 else:
@@ -169,7 +168,7 @@ class MyRequestApp(object):
                         rOk = False
                         sId = str(myParameterDict["service_user_id"][0]).upper()
                         ct = str(myParameterDict["request_content_type"][0]).lower()
-                        logger.info("Checking auth for %s and %s" % (sId, ct))
+                        logger.info("Checking auth for %s and %s", sId, ct)
                         if sId.startswith("SASBDBWS_") and "sasbdb" in ct:
                             rOk = True
                         elif sId.startswith("EMDBWS_") and "emdb" in ct:
@@ -208,7 +207,7 @@ class MyRequestApp(object):
         #
         #
         #
-        logger.debug("Request processing completed for service %s\n\n" % self.__serviceName)
+        logger.debug("Request processing completed for service %s\n\n", self.__serviceName)
         ###
         return myResponse(environment, responseApplication)
 

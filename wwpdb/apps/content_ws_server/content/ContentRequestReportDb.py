@@ -43,13 +43,10 @@ class ContentRequestReportDb(MyConnectionBase):
     def __init__(self, siteId, verbose=True, log=sys.stderr):
         super(ContentRequestReportDb, self).__init__(siteId=siteId, verbose=verbose, log=log)
         self.__verbose = verbose
-        logger.info("Starting with siteId %r" % siteId)
+        logger.info("Starting with siteId %r", siteId)
         self.__lfh = log
         #
         self.__crio = ContentRequestReportIo()
-
-    def setContentType(self, contentType):
-        self.__contentType = contentType
 
     def getContentTypeDef(self, contentType):
         return self.__crio.getContentDefinition(contentType)
@@ -73,9 +70,9 @@ class ContentRequestReportDb(MyConnectionBase):
         rD = {}
         try:
             cDef = self.getContentTypeDef(requestContentType)
-            logger.debug("Content definition %r" % cDef.items())
-            logger.debug("Content keys definition %r" % cDef["content"].keys())
-            logger.debug("Content resource %r" % cDef["resource"])
+            logger.debug("Content definition %r", cDef.items())
+            logger.debug("Content keys definition %r", cDef["content"].keys())
+            logger.debug("Content resource %r", cDef["resource"])
             #
             #  -- Note the str() filter here --
             myCategoryList = [str(c) for c in cDef["content"].keys()]
@@ -87,13 +84,13 @@ class ContentRequestReportDb(MyConnectionBase):
                 return rD
 
             #
-            logger.debug("Category list in definition %r" % myCategoryList)
+            logger.debug("Category list in definition %r", myCategoryList)
             #
             for catName in myCategoryList:
                 rD[catName] = []
                 sList = cDef["content"][catName]
                 myResource, myDatabase = cDef["resource"][catName]
-                logger.debug("Resource %r database %r" % (myResource, myDatabase))
+                logger.debug("Resource %r database %r", myResource, myDatabase)
                 if myResource.upper() in ["DA_INTERNAL", "STATUS"]:
                     if myDatabase in ["da_internal", "da_internal_prod", "da_internal_combine"]:
                         sDef = DaInternalSchemaDef(verbose=self.__verbose, log=sys.stderr, databaseName=myDatabase)
@@ -102,7 +99,7 @@ class ContentRequestReportDb(MyConnectionBase):
                     else:
                         sDef = {}
                 else:
-                    logger.error("Undefined resource %r database %r" % (myResource, myDatabase))
+                    logger.error("Undefined resource %r database %r", myResource, myDatabase)
                     continue
 
                 # tableIdList = sd.getTableIdList()
@@ -128,13 +125,13 @@ class ContentRequestReportDb(MyConnectionBase):
                     sqlGen.setCondition(sqlCondition)
                     #
                 sqlS = sqlGen.getSql()
-                logger.debug("SQL string\n %s\n\n" % sqlS)
+                logger.debug("SQL string\n %s\n\n", sqlS)
                 sqlGen.clear()
                 #
                 rL = self.__processQuery(myResource, sList, sqlS)
                 rD[catName] = rL
         except Exception as e:
-            logger.exception("Database extraction failing for content type %r" % requestContentType)
+            logger.exception("Database extraction failing for content type %r", requestContentType)
             logger.exception(e)
         #
         return rD
@@ -154,7 +151,7 @@ class ContentRequestReportDb(MyConnectionBase):
             rowList = myQ.selectRows(queryString=sqlS)
             #
             if self.__verbose:
-                logger.debug("Result length %d\n" % len(rowList))
+                logger.debug("Result length %d", len(rowList))
                 # logger.debug("Row list %r" % rowList)
                 #
             for row in rowList:
@@ -162,28 +159,28 @@ class ContentRequestReportDb(MyConnectionBase):
                 for ii, s in enumerate(sList):
                     tt = row[ii]
                     try:
-                        if isinstance(tt, (datetime.datetime, datetime.date)):
+                        if isinstance(tt, datetime.datetime) or isinstance(tt, datetime.date):
                             tt = tt.isoformat()
                     except Exception as e:
-                        logger.exception("Failing %r" % tt)
+                        logger.exception("Failing %r", tt)
                         logger.exception(e)
                     d[s] = tt
                 rL.append(d)
             #
             self.closeConnection()
         except Exception as e:
-            logger.exception("Failing for resource %r and query %r" % (resourceName, sqlS))
+            logger.exception("Failing for resource %r and query %r", resourceName, sqlS)
             logger.exception(e)
 
         endTime = time.time()
-        logger.debug("Completed in (%.2f seconds)" % (endTime - startTime))
+        logger.debug("Completed in (%.2f seconds)", endTime - startTime)
         return rL
 
     #
     def json_serial(self, obj):
         """JSON serializer for objects not serializable by default json code"""
 
-        if isinstance(obj, datetime):
+        if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
             serial = obj.isoformat()
             return serial
         raise TypeError("Type not serializable")

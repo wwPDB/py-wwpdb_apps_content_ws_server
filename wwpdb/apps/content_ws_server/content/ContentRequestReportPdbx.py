@@ -38,12 +38,6 @@ class ContentRequestReportPdbx(object):
         self.__crio = ContentRequestReportIo()
         logger.info("Starting ContentRequestReportPdbx")
 
-    def setInputFilePath(self, filePath):
-        self.__inputFilePath = filePath
-
-    def setContentType(self, contentType):
-        self.__contentType = contentType
-
     def getContentTypeDef(self, contentType):
         return self.__crio.getContentDefinition(contentType)
 
@@ -61,14 +55,14 @@ class ContentRequestReportPdbx(object):
             else:
                 containerList = io.readFile(str(filePath), logFilePath=str(logFilePath))
             #
-            logger.info("Read %d data blocks from %r" % (len(containerList), filePath))
+            logger.info("Read %d data blocks from %r", len(containerList), filePath)
 
         except Exception as e:
-            logger.exception("Read failing for %r" % filePath)
+            logger.exception("Read failing for %r", filePath)
             logger.exception(e)
 
         endTime = time.time()
-        logger.info("Completed in (%.2f seconds)\n" % (endTime - startTime))
+        logger.info("Completed in (%.2f seconds)", endTime - startTime)
         return containerList
 
     def __cmpfunc(self, v, target, myType, myOp):
@@ -103,15 +97,15 @@ class ContentRequestReportPdbx(object):
         rD = {}
         try:
             cDef = self.getContentTypeDef(requestContentType)
-            logger.info("Content definition %r" % cDef.items())
-            logger.info("Content keys definition %r" % cDef["content"].keys())
+            logger.info("Content definition %r", cDef.items())
+            logger.info("Content keys definition %r", cDef["content"].keys())
             # Note the str() filter here -
             myCategoryList = [str(c) for c in cDef["content"].keys()]
             myConditionList = [str(c) for c in cDef["conditions"].keys()]
             #
             if len(cDef) < 1:
                 return rD
-            logger.info("Category list in definition %r" % myCategoryList)
+            logger.info("Category list in definition %r", myCategoryList)
             myContainerList = self.readFilePdbx(pdbxFilePath, logFilePath, myCategoryList)
             for container in myContainerList:
                 catNameList = container.getObjNameList()
@@ -139,7 +133,7 @@ class ContentRequestReportPdbx(object):
                                     od[k] = v
                             rD[catName].append(od)
         except Exception as e:
-            logger.exception("Extraction processing failing for %r content type %r" % (pdbxFilePath, requestContentType))
+            logger.exception("Extraction processing failing for %r content type %r", pdbxFilePath, requestContentType)
             logger.exception(e)
         #
         return rD

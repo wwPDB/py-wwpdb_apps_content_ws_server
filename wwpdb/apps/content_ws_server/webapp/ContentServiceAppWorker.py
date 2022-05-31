@@ -81,8 +81,6 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         }
         self.addServices(self.__appPathD)
         #
-        self.__debug = False
-        #
 
     def run(self, reqPath=None):
 
@@ -93,9 +91,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         #
         #  /contentws/report/X_XXXXXX
         #
-        logger.debug("Request prefix %s " % self._reqObj.getRequestPathPrefix())
-        logger.debug("Request path   %s " % self._reqObj.getRequestPath())
-        logger.debug("Request inp path %s " % inpRequestPath)
+        logger.debug("Request prefix %s", self._reqObj.getRequestPathPrefix())
+        logger.debug("Request path   %s", self._reqObj.getRequestPath())
+        logger.debug("Request inp path %s", inpRequestPath)
         #
         if inpRequestPath.startswith("/contentws/report/d_"):
             rFields = inpRequestPath.split("/")
@@ -220,21 +218,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
         return sst
 
-    def __getSessionFile(self, contentType, fileFormat):
-        """Return the selected file path or None -"""
-        try:
-            sD = self._getSessionStoreDict()
-            fName, fFormat = sD[contentType]
-            if fFormat == fileFormat:
-                fp = os.path.join(self._sessionPath, fName)
-                if os.access(fp, os.R_OK):
-                    return fp
-        except Exception as e:
-            logger.exception(e)
-            pass
-        return None
-
-    def __fetchModelFile(self, siteId, entryId, fileSource="archive"):
+    def __fetchModelFile(self, siteId, entryId):
         """Fetch model file first from archive then from the deposit file source ..."""
         generateModel = True
 
@@ -270,7 +254,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 pdbxFilePath = dx.fetch(contentType="model", formatType="pdbx", version="latest")
 
         except Exception as e:
-            logger.exception("Fetch model failing %r" % entryId)
+            logger.exception("Fetch model failing %r", entryId)
             logger.exception(e)
         return pdbxFilePath
 
@@ -278,7 +262,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         """Uses code in the deposition system to generate a model file in the session directory.
         returns path to filename or None if it fails
         """
-        logger.debug("generate %r from depui\n" % entryId)
+        logger.debug("generate %r from depui", entryId)
         sessDir = self._reqObj.getSessionObj().getPath()
 
         # Create script to run. Django will need WWPDB_SITE_ID set before invoking
@@ -306,7 +290,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
         retCode = self.__runTimeout(cmdFile=cmdfile, logFile=logfile, timeout=30)
 
-        logger.debug("response from depui %r\n" % retCode)
+        logger.debug("response from depui %r", retCode)
         if retCode != 0:
             return None
         pI = PathInfo(siteId=self._siteId, sessionPath=sessDir, verbose=True)
@@ -355,27 +339,27 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             if entryId != "unassigned" and contentType.startswith("report-entry-"):
                 ok = True
                 fName = entryId + "_" + contentType + "." + formatType
-                logger.debug("Entry content type %r format type %r and dataset id %r status %r" % (contentType, formatType, entryId, ok))
+                logger.debug("Entry content type %r format type %r and dataset id %r status %r", contentType, formatType, entryId, ok)
 
                 cIDS = ConfigInfoDataSet()
                 siteId = cIDS.getSiteId(entryId)
-                logger.debug("Entry siteid is %r" % siteId)
+                logger.debug("Entry siteid is %r", siteId)
 
-                logger.debug("Entry %r my site %r cover %r" % (siteId, self._siteId, siteCoverage))
+                logger.debug("Entry %r my site %r cover %r", siteId, self._siteId, siteCoverage)
                 if siteId != self._siteId and siteId not in siteCoverage:
-                    logger.debug("Entry %r resides on another site %r" % (entryId, siteId))
+                    logger.debug("Entry %r resides on another site %r", entryId, siteId)
 
                     # Simple lookup if we can redirect
                     siteMap = self._cI.get("PROJECT_CONTENTWS_SERVICE_DICTIONARY")
                     contentWsUrl = siteMap.get(siteId, None)
-                    logger.debug("Alternate site to contact is %r" % contentWsUrl)
+                    logger.debug("Alternate site to contact is %r", contentWsUrl)
                     if contentWsUrl:
                         pD["session_proxy_url"] = contentWsUrl
                     else:
                         ok = False
                 else:
                     # Look up with siteId info for depositions
-                    pdbxFilePath = self.__fetchModelFile(siteId, entryId, fileSource="archive")
+                    pdbxFilePath = self.__fetchModelFile(siteId, entryId)
                     if os.access(pdbxFilePath, os.R_OK):
                         pD["session_pdbx_file_path"] = str(pdbxFilePath)
                     else:
@@ -395,7 +379,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
                 pD["query_site"] = qs
 
-                logger.debug("Summary content type %r format type %r site %s status %r" % (contentType, formatType, qs, ok))
+                logger.debug("Summary content type %r format type %r site %s status %r", contentType, formatType, qs, ok)
 
             if ok:
                 resultPath = os.path.join(self._sessionPath, fName)
@@ -411,7 +395,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 pD["session_history_path"] = self._reqObj.getSessionUserPath()
                 pD["session_id"] = self._sessionId
                 #
-                logger.debug("Request payload %r" % pD)
+                logger.debug("Request payload %r", pD)
 
                 pStatus = sD["status"]
                 try:
@@ -419,10 +403,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     self._setSessionStoreValue("status", "submitted")
                     self._trackServiceStatus("submitted")
                     ok = self.__publishRequest(pD)
-                    logger.debug("Publish method return status %r" % ok)
+                    logger.debug("Publish method return status %r",  ok)
                 except Exception as e:
-                    logger.exception("Failed publish method")
-                    logger.exception(e)
+                    logger.exception("Failed publish method %s", str(e))
                     ok = False
 
                 if not ok:
@@ -451,7 +434,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
     def __publishRequest(self, pD):
         ok = False
-        logger.debug("Publishing request with payload %r" % pD)
+        logger.debug("Publishing request with payload %r", pD)
         try:
             siteID = getSiteId()
             msg = json.dumps(pD)
@@ -463,8 +446,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 routingKey=get_routing_key(),
             )
         except Exception as e:
-            logger.exception("Failing publish request")
-            logger.exception(e)
+            logger.exception("Failing publish request %s", str(e))
         return ok
 
     ##
@@ -489,15 +471,15 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 fpList = glob.glob(self._sessionPath + "/*")
                 for fp in fpList:
                     if os.access(fp, os.R_OK):
-                        pth, fName = os.path.split(fp)
-                        (fn, ft) = os.path.splitext(fName)
+                        _pth, fName = os.path.split(fp)
+                        (_fn, ft) = os.path.splitext(fName)
                         rD[fName] = (fName, ft[1:])
                 dD["index"] = rD
                 sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
                 sst.setServiceStatusText("Index length %d" % len(rD))
             except Exception as e:
-                logger.exception(e)
+                logger.exception("I updating session history %s", str(e))
                 dD["index"] = rD
                 sst.setAppDataDict(dD, format="json")
                 sst.setServiceCompletionFlag(True)
@@ -520,23 +502,22 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             else:
                 ct = self._reqObj.getValue("contenttype")
                 sD = self._getSessionStoreDict()
-                logger.debug("Session store keys %r " % sD.keys())
-                logger.debug("Content type %r " % ct)
+                logger.debug("Session store keys %r ", sD.keys())
+                logger.debug("Content type %r ", ct)
                 #
                 if ct in sD:
-                    fn, fmt = sD[ct]
+                    fn, _fmt = sD[ct]
                 else:
                     fn = self._reqObj.getValue("filename")
 
                 fp = os.path.join(self._sessionPath, fn)
-                logger.debug("download target path %r" % fp)
+                logger.debug("download target path %r", fp)
                 md5Digest = getMD5(fp, block_size=4096, hr=True)
                 sst.setDownload(fn, fp, contentType=None, md5Digest=md5Digest)
                 # self._trackServiceStatus('downloading', {'file': fn})
                 self._trackServiceStatus("downloading", file=fn)
         except Exception as e:
-            logger.exception("FAILING")
-            logger.exception(e)
+            logger.exception("FAILING %s", str(e))
             sst.setServiceCompletionFlag(False)
             sst.setServiceError(msg="File download failed")
 
@@ -574,7 +555,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     sst.setServiceCompletionFlag(True)
                     sst.setServiceStatusText("Activity history length %d" % len(dD["activity_summary"]))
                 except Exception as e:
-                    logger.exception(e)
+                    logger.exception("Updating session store dict %s", str(e))
                     dD["activity_summary"] = {}
                     sst.setAppDataDict(dD, format="json")
                     sst.setServiceCompletionFlag(True)
@@ -585,11 +566,11 @@ class ContentServiceAppWorker(ServiceWorkerBase):
 
     def __runTimeout(self, cmdFile=None, logFile=None, timeout=10):
         """Execute the command as a subprocess with a timeout."""
-        logger.debug("STARTING with time out set at %d (seconds)" % timeout)
+        logger.debug("STARTING with time out set at %d (seconds)", timeout)
         #
         start = datetime.datetime.now()
         try:
-            process = Popen(
+            process = Popen(  # pylint: disable=subprocess-popen-preexec-fn
                 cmdFile,
                 stdout=PIPE,
                 stderr=PIPE,
@@ -603,7 +584,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                 if (now - start).seconds > timeout:
                     os.killpg(process.pid, signal.SIGKILL)
                     os.waitpid(-1, os.WNOHANG)
-                    logger.debug("Execution terminated by timeout %d (seconds)" % timeout)
+                    logger.debug("Execution terminated by timeout %d (seconds)", timeout)
                     if logFile is not None:
                         ofh = open(logFile, "a")
                         ofh.write("Execution terminated by timeout %d (seconds)\n" % timeout)
@@ -617,9 +598,9 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             logger.error(e)
         #
         output = process.communicate()
-        logger.debug("completed with stdout data %r" % output[0])
-        logger.debug("completed with stderr data %r\n" % output[1])
-        logger.debug("completed with return code %r\n" % process.returncode)
+        logger.debug("completed with stdout data %r", output[0])
+        logger.debug("completed with stderr data %r", output[1])
+        logger.debug("completed with return code %r", process.returncode)
         return process.returncode
 
     #

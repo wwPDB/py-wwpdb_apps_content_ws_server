@@ -45,13 +45,13 @@ class Register(object):
         try:
             tU = JwtTokenUtils(tokenPrefix=tokenPrefix)
             tokenId, jwtToken = tU.getToken(emailAddress, expireDays=expireDays)
-            logging.info("For e-mail %r token ID %r is %r " % (emailAddress, tokenId, jwtToken))
+            logging.info("For e-mail %r token ID %r is %r ", emailAddress, tokenId, jwtToken)
             tD = tU.parseToken(jwtToken)
-            logging.info("token %r payload %r " % (tokenId, tD))
+            logging.info("token %r payload %r ", tokenId, tD)
             #
             with open(tokenFileName, "w") as outfile:
                 outfile.write("%s" % jwtToken)
-            logging.info("token written to %r " % tokenFileName)
+            logging.info("token written to %r ", tokenFileName)
             ok = True
         except Exception as e:
             logging.exception("Making token failed")

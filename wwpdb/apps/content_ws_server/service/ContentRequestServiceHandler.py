@@ -64,7 +64,7 @@ class MessageConsumerWorker(object):
 
     def __setup(self):
         mqc = MessageQueueConnection()
-        url = mqc._getDefaultConnectionUrl()
+        url = mqc._getDefaultConnectionUrl()  # pylint: disable=protected-access
         self.__mc = MessageConsumer(amqpUrl=url)
         self.__mc.setQueue(queueName=get_queue_name(), routingKey=get_routing_key())
         self.__mc.setExchange(exchange=get_exchange_name(), exchangeType=get_exchange_topic())

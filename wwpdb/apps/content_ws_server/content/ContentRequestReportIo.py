@@ -41,7 +41,7 @@ class ContentRequestReportIo(object):
     def __init__(self):
         self.__siteId = getSiteId(defaultSiteId=None)
         self.__cI = ConfigInfo(self.__siteId)
-        logger.info("Starting with siteId %r" % self.__siteId)
+        logger.info("Starting with siteId %r", self.__siteId)
         self.__D = None
         #
         self.__lockDirPath = self.__cI.get("SITE_SERVICE_REGISTRATION_LOCKDIR_PATH", ".")
@@ -84,7 +84,7 @@ class ContentRequestReportIo(object):
             with open(fp, "r") as infile:
                 return json.load(infile)
         except Exception as e:
-            logger.info("Failed reading json resource file %s\n" % fp)
+            logger.info("Failed reading json resource file %s", fp)
             logger.exception(e)
 
         return {}
@@ -108,7 +108,6 @@ class ContentRequestReportIo(object):
                 json.dump(contentDefD, outfile, indent=4)
             return True
         except Exception as e:
-            logger.exception("Failed writing json resource file %s\n" % fp)
-            logger.exception(e)
+            logger.exception("Failed writing json resource file %s -- %s", fp, str(e))
 
         return False

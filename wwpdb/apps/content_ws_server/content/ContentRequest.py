@@ -50,19 +50,18 @@ class ContentRequest(object):
 
         self.__siteId = getSiteId(defaultSiteId=None)
         self.__cI = ConfigInfo(self.__siteId)
-        logger.info("Starting with siteId %r" % self.__siteId)
+        logger.info("Starting with siteId %r", self.__siteId)
         self.__topSessionPath = self.__cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
-        logger.info("Starting with session path %r" % self.__topSessionPath)
+        logger.info("Starting with session path %r", self.__topSessionPath)
         self.__sessionPath = None
         self.__sdsPrefix = None
         self.__sds = None
         self.__debugPayload = False
         #
-        self.__sD = {}
         self.__pD = {}
 
     def setup(self, pD):
-        logger.debug("Content request input payload %r" % pD)
+        logger.debug("Content request input payload %r", pD)
         try:
             self.__sessionPath = pD["session_path"]
             self.__sdsPrefix = pD["session_store_prefix"]
@@ -71,17 +70,16 @@ class ContentRequest(object):
             #
             #  JDW not used
             # self.__sD = self.__sds.getDictionary()
-            # logger.info("Session dictionary %r" % self.__sD)
+            # logger.info("Session dictionary %r", self.__sD)
             #
             # logger.info("Preparing copy of dictionary")
             self.__pD = copy.deepcopy(pD)
             #
             if self.__debugPayload:
-                logger.debug("Parameter dictionary copy %r" % self.__pD)
+                logger.debug("Parameter dictionary copy %r", self.__pD)
             return True
         except Exception as e:
-            logger.exception("Failing")
-            logger.exception(e)
+            logger.exception("Failing %s", str(e))
 
         return False
 
@@ -95,11 +93,11 @@ class ContentRequest(object):
         if testMode:
             try:
                 wSecs = int(self.__pD.get("worker_test_duration", 10))
-                logger.info("Running in test mode with duration %d seconds" % wSecs)
+                logger.info("Running in test mode with duration %d seconds", wSecs)
                 time.sleep(wSecs)
             except Exception as e:
                 logger.exception(e)
-                pass
+
             try:
                 ct = self.__pD["request_content_type"]
                 fp = self.__pD["report_path"]
@@ -109,8 +107,7 @@ class ContentRequest(object):
                 iD[ct] = (fn, "data")
                 successFlag = True
             except Exception as e:
-                logger.exception("Mock execution file update failing")
-                logger.exception(e)
+                logger.exception("Mock execution file update failing %s", str(e))
             #
             logger.info("Test mode service completed")
         else:
@@ -145,24 +142,24 @@ class ContentRequest(object):
             # Update service activity tracking
             sH = ServiceHistory(historyPath=self.__pD["session_history_path"])
             sH.add(sessionId=self.__pD["session_id"], statusOp=iD["status"])
-            logger.info("Updated service history store with %r" % iD["status"])
+            logger.info("Updated service history store with %r", iD["status"])
             #
         except Exception as e:
-            logger.exception("Failed to update session tracking history status %r" % iD)
+            logger.exception("Failed to update session tracking history status %r", iD)
             logger.exception(e)
 
         try:
             #  Update session store -
-            logger.info("Updated session store with %r" % iD)
+            logger.info("Updated session store with %r", iD)
             self.__sds.updateAll(iD)
             #
             tStatus = self.__sds.get("status")
-            logger.info("Read session store status as  %r" % tStatus)
+            logger.info("Read session store status as  %r", tStatus)
         except Exception as e:
-            logger.exception("Failed to update session status %r" % iD)
+            logger.exception("Failed to update session status %r", iD)
             logger.exception(e)
         #
-        logger.info("Updated session store with: %r" % iD)
+        logger.info("Updated session store with: %r", iD)
         return True
 
     def __run(self, pD):
@@ -182,7 +179,7 @@ class ContentRequest(object):
 
             if proxyReportUrl and contentType.startswith("report-entry-"):
                 logger.debug("Forwarding request to another server for an entry")
-                logger.debug("pD is %r" % pD)
+                logger.debug("pD is %r", pD)
                 formatType = pD.get("request_format_type")
 
                 cr = ContentRequestProxyReportPdbx()
@@ -195,7 +192,7 @@ class ContentRequest(object):
                 cr = ContentRequestReportPdbx()
                 ctypeL = cr.getContentTypes()
                 if contentType in ctypeL:
-                    logger.debug("Processing content definition %r" % contentType)
+                    logger.debug("Processing content definition %r", contentType)
                     logFilePath = os.path.join(self.__sessionPath, dataSetId + " -parser.log")
                     pdbxFilePath = pD["session_pdbx_file_path"]
                     #
@@ -204,10 +201,10 @@ class ContentRequest(object):
                     # Filter content based on contentType policies
                     rD = cF.filterContent(contentType, rD)
                     if self.__debugPayload:
-                        logger.debug("File content %r" % rD)
+                        logger.debug("File content %r", rD)
                     ss = json.dumps(rD)
                     if self.__debugPayload:
-                        logger.info("JSON serialized result %r" % ss)
+                        logger.info("JSON serialized result %r", ss)
                     with open(reportPath, "w") as ofh:
                         ofh.write(ss)
                     ok = True
@@ -220,27 +217,26 @@ class ContentRequest(object):
                 ctL = cr.getContentTypes()
                 if contentType in ctL:
                     rD = cr.extractContent(contentType)
-                    logger.info("Database content length %r" % len(rD))
+                    logger.info("Database content length %r", len(rD))
                     ss = json.dumps(rD)
-                    logger.info("JSON serialized result length %r" % len(ss))
+                    logger.info("JSON serialized result length %r", len(ss))
                     with open(reportPath, "w") as ofh:
                         ofh.write(ss)
                     ok = True
             else:
                 ok = False
             #
-            logger.info(" - Site Id: %r" % siteId)
-            logger.info(" - Session path: %r" % sessionPath)
-            logger.info(" - Dataset Id:   %r" % dataSetId)
-            logger.info(" - Content Type: %r" % contentType)
-            logger.info(" - Report file: %r" % reportFile)
-            logger.info(" - Report path: %r" % reportPath)
-            logger.info(" - Return status: %r" % ok)
+            logger.info(" - Site Id: %r", siteId)
+            logger.info(" - Session path: %r", sessionPath)
+            logger.info(" - Dataset Id:   %r", dataSetId)
+            logger.info(" - Content Type: %r", contentType)
+            logger.info(" - Report file: %r", reportFile)
+            logger.info(" - Report path: %r", reportPath)
+            logger.info(" - Return status: %r", ok)
 
             return ok
         except Exception as e:
-            logger.exception("Failing content request runner method ")
-            logger.exception(e)
+            logger.exception("Failing content request runner method %s", str(e))
 
         return False
         #

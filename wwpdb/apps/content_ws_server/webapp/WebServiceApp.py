@@ -42,13 +42,15 @@ logger = logging.getLogger()
 class WebServiceApp(object):
     """Handle request and response object processing for various web services."""
 
-    def __init__(self, parameterDict={}):
+    def __init__(self, parameterDict=None):
         """
         Create an instance of the appropriate worker class to manage input service request.
 
          :param `parameterDict`: dictionary storing parameter information from the input request.
 
         """
+        if parameterDict is None:
+            parameterDict = {}
         self.__reqObj = ServiceRequest(parameterDict)
         siteId = self.__reqObj.getSiteId()
         #
@@ -68,7 +70,7 @@ class WebServiceApp(object):
         """
 
         requestPath = self.__reqObj.getRequestPath()
-        logger.debug("Processing requiest path : %s" % requestPath)
+        logger.debug("Processing requiest path : %s", requestPath)
         #
         if requestPath.startswith("/contentws"):
             swrk = ContentServiceAppWorker(reqObj=self.__reqObj)
@@ -78,7 +80,7 @@ class WebServiceApp(object):
         #  Each class implements a run() method that returns a ServiceSessionState object -
         #
         sst = swrk.run()
-        logger.debug("Service response object for request path: %s\n   %r" % (requestPath, sst.getAppDataDict()))
+        logger.debug("Service response object for request path: %s\n   %r", requestPath, sst.getAppDataDict())
         sr = self.__buildResponse(sst)
         #
         # Return only the dictionary from the response object -

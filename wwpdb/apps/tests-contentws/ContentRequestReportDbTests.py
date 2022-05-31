@@ -59,7 +59,6 @@ logger.setLevel(logging.DEBUG)
 class ContentRequestReportDbTests(unittest.TestCase):
     def setUp(self):
         self.__verbose = True
-        self.__contentTypeList = ["req-emdb-summary-admin-report", "req-emdb-summary-status-report"]
         self.__siteId = getSiteId(defaultSiteId=None)
 
     def tearDown(self):
