@@ -246,7 +246,7 @@ def main():
         myDP.start()
     elif args.stopOp:
         sys.stdout.write("+DetachedMessageConsumer() stopping consumer service at %s\n" % lt)
-        logger.info("DetachedMessageConsumer() stopping consumer service at %s" , lt)
+        logger.info("DetachedMessageConsumer() stopping consumer service at %s", lt)
         myDP.stop()
     elif args.restartOp:
         sys.stdout.write("+DetachedMessageConsumer() restarting consumer service at %s\n" % lt)

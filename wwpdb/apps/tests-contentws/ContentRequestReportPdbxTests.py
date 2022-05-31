@@ -19,31 +19,18 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import platform
-
 import json
 import logging
 import os
 import time
+import sys
 import unittest
 
-HERE = os.path.abspath(os.path.dirname(__file__))
-TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
-TESTOUTPUT = os.path.join(HERE, "test-output", platform.python_version())
-if not os.path.exists(TESTOUTPUT):
-    os.makedirs(TESTOUTPUT)
-mockTopPath = os.path.join(TOPDIR, "wwpdb", "mock-data")
-rwMockTopPath = os.path.join(TESTOUTPUT)
-
-# Must create config file before importing ConfigInfo
-from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup  # noqa: E402
-from wwpdb.utils.testing.CreateRWTree import CreateRWTree  # noqa: E402
-
-# Copy site-config and selected items
-crw = CreateRWTree(mockTopPath, TESTOUTPUT)
-crw.createtree(["site-config", "wsresources"])
-# Use populate r/w site-config using top mock site-config
-SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
+if __package__ is None or __package__ == "":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from commonsetup import HERE  # noqa:  F401 pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401 pylint: disable=relative-beyond-top-level
 
 from wwpdb.apps.content_ws_server.content.ContentRequestReportPdbx import ContentRequestReportPdbx  # noqa: E402
 
@@ -56,7 +43,7 @@ logger.setLevel(logging.DEBUG)
 class ContentRequestReportPdbxTests(unittest.TestCase):
     def setUp(self):
         self.__verbose = True
-        self.__pdbxFilePath = os.path.join(mockTopPath, "MODELS", "1kip.cif")
+        self.__pdbxFilePath = os.path.join(HERE, "data", "1kip.cif")
         self.__logFilePath = "my.log"
 
     def tearDown(self):

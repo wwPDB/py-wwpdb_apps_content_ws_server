@@ -403,7 +403,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
                     self._setSessionStoreValue("status", "submitted")
                     self._trackServiceStatus("submitted")
                     ok = self.__publishRequest(pD)
-                    logger.debug("Publish method return status %r",  ok)
+                    logger.debug("Publish method return status %r", ok)
                 except Exception as e:
                     logger.exception("Failed publish method %s", str(e))
                     ok = False

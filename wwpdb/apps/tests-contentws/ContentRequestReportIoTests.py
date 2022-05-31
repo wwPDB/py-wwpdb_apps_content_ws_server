@@ -20,30 +20,17 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import platform
-
 import logging
+import sys
 import os
 import time
 import unittest
 
-HERE = os.path.abspath(os.path.dirname(__file__))
-TOPDIR = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
-TESTOUTPUT = os.path.join(HERE, "test-output", platform.python_version())
-if not os.path.exists(TESTOUTPUT):
-    os.makedirs(TESTOUTPUT)
-mockTopPath = os.path.join(TOPDIR, "wwpdb", "mock-data")
-rwMockTopPath = os.path.join(TESTOUTPUT)
-
-# Must create config file before importing ConfigInfo
-from wwpdb.utils.testing.SiteConfigSetup import SiteConfigSetup  # noqa: E402
-from wwpdb.utils.testing.CreateRWTree import CreateRWTree  # noqa: E402
-
-# Copy site-config and selected items
-crw = CreateRWTree(mockTopPath, TESTOUTPUT)
-crw.createtree(["site-config", "wsresources"])
-# Use populate r/w site-config using top mock site-config
-SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
+if __package__ is None or __package__ == "":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from commonsetup import HERE  # noqa:  F401 pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401 pylint: disable=relative-beyond-top-level
 
 from wwpdb.apps.content_ws_server.content.ContentRequestReportIo import ContentRequestReportIo  # noqa: E402
 
@@ -66,7 +53,6 @@ class ContentRequestReportIoTests(unittest.TestCase):
                 },
                 "conditions": {"entity_poly": {"entity_id": ("1", "char", "eq")}, "database_2": {"database_id": ("PDB", "char", "eq")}},
                 "type": "entry",
-
             },
             "report-summary-wwpdb-entity-poly": {
                 "content": {"entity_poly": ["structure_id", "entity_id", "type", "nstd_linkage", "nstd_monomer", "pdbx_seq_one_letter_code", "pdbx_seq_one_letter_code_can"]},

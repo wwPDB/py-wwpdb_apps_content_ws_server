@@ -111,3 +111,6 @@ test-output
 
 #
 ws_content_type_definitions.json-20*
+
+# emacs
+*~
