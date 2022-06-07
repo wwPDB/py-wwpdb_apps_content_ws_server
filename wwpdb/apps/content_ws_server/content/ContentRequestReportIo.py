@@ -34,17 +34,17 @@ logger = logging.getLogger()
 
 class ContentRequestReportIo(object):
     """
-     Manage fetching and storing content type definitions.
+    Manage fetching and storing content type definitions.
 
     """
 
     def __init__(self):
         self.__siteId = getSiteId(defaultSiteId=None)
         self.__cI = ConfigInfo(self.__siteId)
-        logger.info("Starting with siteId %r" % self.__siteId)
+        logger.info("Starting with siteId %r", self.__siteId)
         self.__D = None
         #
-        self.__lockDirPath = self.__cI.get("SITE_SERVICE_REGISTRATION_LOCKDIR_PATH", '.')
+        self.__lockDirPath = self.__cI.get("SITE_SERVICE_REGISTRATION_LOCKDIR_PATH", ".")
         lockutils.set_defaults(self.__lockDirPath)
 
     def __setup(self):
@@ -59,8 +59,7 @@ class ContentRequestReportIo(object):
             return {}
 
     def getContentTypes(self):
-        """  Return a list of defined content types -
-        """
+        """Return a list of defined content types -"""
         self.__setup()
         if self.__D is not None:
             return self.__D.keys()
@@ -76,31 +75,31 @@ class ContentRequestReportIo(object):
         return get_content_definition_file_path()
 
     def __readContentDefinitionDictionary(self):
-        """  Read the dictionary containing web service content type definitions.
+        """Read the dictionary containing web service content type definitions.
 
-             Returns: d[<content_type>] = {categoryName: [at1,at2,...], ...}  or a empty dictionary.
+        Returns: d[<content_type>] = {categoryName: [at1,at2,...], ...}  or a empty dictionary.
         """
         fp = self.__get_content_definition_file()
         try:
             with open(fp, "r") as infile:
                 return json.load(infile)
         except Exception as e:
-            logger.info("Failed reading json resource file %s\n" % fp)
+            logger.info("Failed reading json resource file %s", fp)
             logger.exception(e)
 
         return {}
 
-    @lockutils.synchronized('wscontenttypedef.exceptionfile-lock', external=True)
+    @lockutils.synchronized("wscontenttypedef.exceptionfile-lock", external=True)
     def writeContentDefinitionDictionary(self, contentDefD, backup=True):
-        """  Write the dictionary containing web service content type definitions.
+        """Write the dictionary containing web service content type definitions.
 
-             Returns: True for success or False otherwise
+        Returns: True for success or False otherwise
         """
         fp = self.__get_content_definition_file()
 
         try:
             if backup:
-                bp = fp + datetime.datetime.now().strftime('-%Y-%m-%d-%H-%M-%S')
+                bp = fp + datetime.datetime.now().strftime("-%Y-%m-%d-%H-%M-%S")
                 d = self.__readContentDefinitionDictionary()
                 with open(bp, "w") as outfile:
                     json.dump(d, outfile, indent=4)
@@ -109,7 +108,6 @@ class ContentRequestReportIo(object):
                 json.dump(contentDefD, outfile, indent=4)
             return True
         except Exception as e:
-            logger.exception("Failed writing json resource file %s\n" % fp)
-            logger.exception(e)
+            logger.exception("Failed writing json resource file %s -- %s", fp, str(e))
 
         return False

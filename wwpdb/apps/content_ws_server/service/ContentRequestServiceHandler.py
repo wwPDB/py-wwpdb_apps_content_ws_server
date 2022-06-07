@@ -23,8 +23,7 @@ from wwpdb.utils.message_queue.MessageConsumerBase import MessageConsumerBase
 from wwpdb.utils.message_queue.MessageQueueConnection import MessageQueueConnection
 
 from wwpdb.apps.content_ws_server.content.ContentRequest import ContentRequest
-from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_exchange_name, \
-    get_exchange_topic, get_routing_key
+from wwpdb.apps.content_ws_server.message_queue.MessageQueue import get_queue_name, get_exchange_name, get_exchange_topic, get_routing_key
 
 logger = logging.getLogger()
 logging.basicConfig(
@@ -34,8 +33,8 @@ logging.basicConfig(
 
 
 class MessageConsumer(MessageConsumerBase):
-    def __init__(self, amqpUrl):
-        super(MessageConsumer, self).__init__(amqpUrl)
+    # def __init__(self, amqpUrl):
+    #     super(MessageConsumer, self).__init__(amqpUrl)
 
     def workerMethod(self, msgBody, deliveryTag=None):
         try:
@@ -48,12 +47,12 @@ class MessageConsumer(MessageConsumerBase):
         #
         successFlag = True
         try:
-            # logger.info("Message body %r" % pD)
+            # logger.info("Message body %r", pD)
             v = ContentRequest()
             v.setup(pD)
             v.run()
         except Exception as e:
-            logger.exception("Failed service execution with message %r" % pD)
+            logger.exception("Failed service execution with message %r", pD)
             logger.exception(e)
 
         return successFlag
@@ -65,15 +64,14 @@ class MessageConsumerWorker(object):
 
     def __setup(self):
         mqc = MessageQueueConnection()
-        url = mqc._getDefaultConnectionUrl()
+        url = mqc._getDefaultConnectionUrl()  # pylint: disable=protected-access
         self.__mc = MessageConsumer(amqpUrl=url)
         self.__mc.setQueue(queueName=get_queue_name(), routingKey=get_routing_key())
         self.__mc.setExchange(exchange=get_exchange_name(), exchangeType=get_exchange_topic())
         #
 
     def run(self):
-        """  Run async consumer
-        """
+        """Run async consumer"""
         startTime = time.time()
         logger.info("Starting ")
         try:
@@ -87,7 +85,7 @@ class MessageConsumerWorker(object):
             logger.exception(e)
 
         endTime = time.time()
-        logger.info("Completed (%.3f seconds)" % (endTime - startTime))
+        logger.info("Completed (%.3f seconds)", endTime - startTime)
 
     def suspend(self):
         logger.info("Suspending consumer worker... ")
@@ -95,20 +93,20 @@ class MessageConsumerWorker(object):
 
 
 class MyDetachedProcess(DetachedProcessBase):
-    """  This class implements the run() method of the DetachedProcessBase() utility class.
+    """This class implements the run() method of the DetachedProcessBase() utility class.
 
-         Illustrates the use of python logging and various I/O channels in detached process.
+    Illustrates the use of python logging and various I/O channels in detached process.
     """
 
     def __init__(
-            self,
-            pidFile="/tmp/DetachedProcessBase.pid",
-            stdin=os.devnull,
-            stdout=os.devnull,
-            stderr=os.devnull,
-            wrkDir="/",
-            gid=None,
-            uid=None,
+        self,
+        pidFile="/tmp/DetachedProcessBase.pid",
+        stdin=os.devnull,
+        stdout=os.devnull,
+        stderr=os.devnull,
+        wrkDir="/",
+        gid=None,
+        uid=None,
     ):
         super(MyDetachedProcess, self).__init__(
             pidFile=pidFile,
@@ -131,7 +129,6 @@ class MyDetachedProcess(DetachedProcessBase):
             self.__mcw.suspend()
         except Exception as e:
             logger.exception(e)
-            pass
 
 
 def main():
@@ -212,24 +209,14 @@ def main():
     del options
 
     #
-    pidFilePath = os.path.join(
-        wsLogDirPath, myHostName + "_" + str(args.instanceNo) + ".pid"
-    )
-    stdoutFilePath = os.path.join(
-        wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_stdout.log"
-    )
-    stderrFilePath = os.path.join(
-        wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_stderr.log"
-    )
-    wfLogFilePath = os.path.join(
-        wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_" + now + ".log"
-    )
+    pidFilePath = os.path.join(wsLogDirPath, myHostName + "_" + str(args.instanceNo) + ".pid")
+    stdoutFilePath = os.path.join(wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_stdout.log")
+    stderrFilePath = os.path.join(wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_stderr.log")
+    wfLogFilePath = os.path.join(wsLogDirPath, myHostName + "_" + str(args.instanceNo) + "_" + now + ".log")
     #
-    logger = logging.getLogger(name="root")
+    logger = logging.getLogger(name="root")  # pylint: disable=redefined-outer-name
     logging.captureWarnings(True)
-    formatter = logging.Formatter(
-        "%(asctime)s [%(levelname)s]-%(module)s.%(funcName)s: %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s]-%(module)s.%(funcName)s: %(message)s")
     handler = logging.FileHandler(wfLogFilePath)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -254,28 +241,19 @@ def main():
     )
 
     if args.startOp:
-        sys.stdout.write(
-            "+DetachedMessageConsumer() starting consumer service at %s\n" % lt
-        )
-        logger.info("DetachedMessageConsumer() starting consumer service at %s" % lt)
+        sys.stdout.write("+DetachedMessageConsumer() starting consumer service at %s\n" % lt)
+        logger.info("DetachedMessageConsumer() starting consumer service at %s", lt)
         myDP.start()
     elif args.stopOp:
-        sys.stdout.write(
-            "+DetachedMessageConsumer() stopping consumer service at %s\n" % lt
-        )
-        logger.info("DetachedMessageConsumer() stopping consumer service at %s" % lt)
+        sys.stdout.write("+DetachedMessageConsumer() stopping consumer service at %s\n" % lt)
+        logger.info("DetachedMessageConsumer() stopping consumer service at %s", lt)
         myDP.stop()
     elif args.restartOp:
-        sys.stdout.write(
-            "+DetachedMessageConsumer() restarting consumer service at %s\n" % lt
-        )
-        logger.info("DetachedMessageConsumer() restarting consumer service at %s" % lt)
+        sys.stdout.write("+DetachedMessageConsumer() restarting consumer service at %s\n" % lt)
+        logger.info("DetachedMessageConsumer() restarting consumer service at %s", lt)
         myDP.restart()
     elif args.statusOp:
-        sys.stdout.write(
-            "+DetachedMessageConsumer() reporting status for consumer service at %s\n"
-            % lt
-        )
+        sys.stdout.write("+DetachedMessageConsumer() reporting status for consumer service at %s\n" % lt)
         sys.stdout.write(myDP.status())
     else:
         pass

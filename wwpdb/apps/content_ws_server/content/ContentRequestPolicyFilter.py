@@ -22,7 +22,7 @@ logger = logging.getLogger()
 
 class ContentRequestPolicyFilter(object):
     """
-     Manage various policy filters for entry data. A post request filter.
+    Manage various policy filters for entry data. A post request filter.
 
     """
 
@@ -36,12 +36,12 @@ class ContentRequestPolicyFilter(object):
         if not rD:
             return rD
 
-        logger.debug("Content in %r" % rD)
+        logger.debug("Content in %r", rD)
         if "sasbdb" in contentType:
             # Policy 1: suppress title and author
             pDS = rD.get("pdbx_database_status", None)
             if pDS:
-                logger.debug("Filtering %r" % pDS)
+                logger.debug("Filtering %r", pDS)
                 tS = pDS[0].get("title_suppression", None)
                 if tS and tS in ["Y"]:
                     logger.debug("Removing author and title and contact")
@@ -58,6 +58,6 @@ class ContentRequestPolicyFilter(object):
             if removeAll:
                 rD = {}
 
-        logger.debug("Content out %r" % rD)
+        logger.debug("Content out %r", rD)
 
         return rD

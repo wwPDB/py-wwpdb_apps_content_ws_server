@@ -12,9 +12,7 @@ packages = []
 thisPackage = "wwpdb.apps.content_ws_server"
 
 with open("wwpdb/apps/content_ws_server/__init__.py", "r") as fd:
-    version = re.search(
-        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -40,11 +38,11 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    entry_points={
-    },
+    entry_points={},
     #
-    python_requires='>=3.4',
+    python_requires=">=3.4",
     install_requires=[
+        "mmcif",
         "wwpdb.io",
         "wwpdb.utils.config",
         "wwpdb.utils.db",
@@ -67,11 +65,7 @@ setup(
     tests_require=["tox", "wwpdb.utils.testing"],
     #
     # Not configured ...
-    extras_require={
-        "dev": ["check-manifest"],
-        "test": ["coverage"],
-        "server": ["webob"]
-    },
+    extras_require={"dev": ["check-manifest"], "test": ["coverage"], "server": ["webob"]},
     # Added for
     command_options={
         "build_sphinx": {
