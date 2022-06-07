@@ -480,6 +480,7 @@
         "content": {
             "rcsb_status": [
                 "Structure_ID",
+                "title",
                 "suppressed_title_Y_N"
             ],
             "em_admin": [
@@ -493,7 +494,6 @@
                 "obsoleted_date",
                 "replace_existing_entry_flag",
                 "title",
-                "author_list"
             ],
             "database_2": [
                 "Structure_ID",
@@ -505,6 +505,17 @@
                 "name",
                 "pdbx_ordinal",
                 "identifier_ORCID"
+            ],
+            "em_author_list": [
+                "Structure_ID",
+                "author",
+                "ordinal",
+                "identifier_ORCID"
+            ],
+            "em_depui": [
+                "Structure_ID",
+                "same_authors_as_pdb",
+                "same_title_as_pdb"
             ]
         },
         "resource": {
@@ -523,23 +534,18 @@
             "audit_author": [
                 "da_internal",
                 "da_internal"
-            ]
+            ],
+            "em_author_list": [
+                "da_internal",
+                "da_internal"
+            ],
+            "em_depui": [
+                "da_internal",
+                "da_internal"
+            ],
+
         },
         "conditions": {
-            "database_2": {
-                "database_id": [
-                    "EMDB",
-                    "char",
-                    "LIKE"
-                ]
-            },
-            "rcsb_status": {
-                "exp_method": [
-                   "ELECTRON MICROSCOPY",
-                    "char",
-                    "LIKE"
-                ]
-            }
         },
         "type": "rdbms"
     }
