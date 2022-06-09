@@ -326,18 +326,77 @@ class ContentRequestReportIoTests(unittest.TestCase):
             },
             "report-summary-emdb-status": {
                 "content": {
-                    "rcsb_status": ["structure_id", "exp_method", "process_site", "rcsb_annotator", "title", "initial_deposition_date"],
-                    "database_2": ["structure_id", "database_id", "database_code"],
-                    "em_admin": ["structure_id", "current_status", "deposition_date", "deposition_site", "last_update", "map_release_date", "header_release_date"],
+                    "rcsb_status": [
+                        "Structure_ID",
+                        "title",
+                        "suppressed_title_Y_N"
+                    ],
+                    "em_admin": [
+                        "Structure_id",
+                        "entry_id",
+                        "current_status",
+                        "deposition_date",
+                        "deposition_site",
+                        "last_update",
+                        "map_release_date",
+                        "obsoleted_date",
+                        "replace_existing_entry_flag",
+                        "title"
+                    ],
+                    "database_2": [
+                        "Structure_ID",
+                        "database_id",
+                        "database_code"
+                    ],
+                    "audit_author": [
+                        "Structure_ID",
+                        "name",
+                        "pdbx_ordinal",
+                        "identifier_ORCID"
+                    ],
+                    "em_author_list": [
+                        "Structure_ID",
+                        "author",
+                        "ordinal",
+                        "identifier_ORCID"
+                    ],
+                    "em_depui": [
+                        "Structure_ID",
+                        "same_authors_as_pdb",
+                        "same_title_as_pdb"
+                    ]
                 },
                 "resource": {
-                    "rcsb_status": ("da_internal", "da_internal"),
-                    "database_2": ("da_internal", "da_internal"),
-                    "em_admin": ("da_internal", "da_internal"),
+                    "rcsb_status": [
+                        "da_internal",
+                        "da_internal"
+                    ],
+                    "em_admin": [
+                        "da_internal",
+                        "da_internal"
+                    ],
+                    "database_2": [
+                        "da_internal",
+                        "da_internal"
+                    ],
+                    "audit_author": [
+                        "da_internal",
+                        "da_internal"
+                    ],
+                    "em_author_list": [
+                        "da_internal",
+                        "da_internal"
+                    ],
+                    "em_depui": [
+                        "da_internal",
+                        "da_internal"
+                    ]
+
                 },
-                "conditions": {"rcsb_status": {"exp_method": ("ELECTRON MICROSCOPY", "char", "LIKE")}},
-                "type": "rdbms",
-            },
+                "conditions": {
+                },
+                "type": "rdbms"
+            }
         }
 
     def tearDown(self):
