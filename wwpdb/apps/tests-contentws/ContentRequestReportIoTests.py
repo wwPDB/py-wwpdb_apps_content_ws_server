@@ -394,6 +394,13 @@ class ContentRequestReportIoTests(unittest.TestCase):
 
                 },
                 "conditions": {
+                    "rcsb_status": {
+                        "exp_method": [
+                            "%ELECTRON%",
+                            "char",
+                            "LIKE"
+                        ]
+                    }
                 },
                 "type": "rdbms"
             }
