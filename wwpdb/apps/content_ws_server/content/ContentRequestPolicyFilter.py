@@ -27,7 +27,6 @@ class ContentRequestPolicyFilter(object):
     """
 
     def __init__(self):
-
         pass
 
     def filterContent(self, contentType, rD):

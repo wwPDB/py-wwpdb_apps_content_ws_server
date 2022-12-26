@@ -83,7 +83,6 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         #
 
     def run(self, reqPath=None):
-
         #
         inpRequestPath = reqPath if reqPath else self._reqObj.getRequestPath()
         #
@@ -114,7 +113,6 @@ class ContentServiceAppWorker(ServiceWorkerBase):
         return sst
 
     def _sessionInfoOp(self):
-
         logger.debug("Starting now")
         sst = ServiceSessionState()
         #            join an existing session -

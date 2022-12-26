@@ -47,7 +47,6 @@ class ContentRequest(object):
     """
 
     def __init__(self):
-
         self.__siteId = getSiteId(defaultSiteId=None)
         self.__cI = ConfigInfo(self.__siteId)
         logger.info("Starting with siteId %r", self.__siteId)
