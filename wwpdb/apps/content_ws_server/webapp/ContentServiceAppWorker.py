@@ -314,6 +314,7 @@ class ContentServiceAppWorker(ServiceWorkerBase):
             sD = self._getSessionStoreDict()
             ok = False
             pD = {}
+            fName = ""
             #
             #   Check for a test request
             #
